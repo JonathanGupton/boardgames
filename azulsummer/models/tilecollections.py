@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from azulsummer.components import TileColor
+from azulsummer.models.enums import TileColor
 
 
 class TileCollection(np.ndarray):
     """Base class for Tile Collections"""
 
-    N_TILE_TYPES = 6
+    N_TILE_TYPES = len(TileColor)
 
     def __new__(cls, arr, *args, **kwargs):
         obj = np.asarray(arr, dtype="B").view(cls)
@@ -28,6 +28,19 @@ class TileCollection(np.ndarray):
         self.fill(0)
 
 
+class TileTransition(TileCollection):
+    """Generic collection to transfer tiles between collections"""
+    INITIAL_TILE_COUNT = 0
+
+    def __new__(cls, *args, **kwargs):
+        initial_tiles = [cls.INITIAL_TILE_COUNT] * super().N_TILE_TYPES
+        obj = super().__new__(cls, arr=initial_tiles)
+        return obj
+
+    def __array_finalize__(self, obj):
+        pass
+
+
 class TileBag(TileCollection):
     """Source of tiles for loading the factory displays and supply spaces"""
 
@@ -44,11 +57,6 @@ class TileBag(TileCollection):
     def draw(self) -> int:
         """Draw a tile from the bag"""
         pass
-        # if sum(self.tile_count) == 0:
-        #     self.refill_bag_from_tower()
-        # idx = sample(range(self.N_TILE_TYPES), k=1, counts=self.tile_count)[0]
-        # self.tile_count[idx] -= 1
-        # return idx
 
 
 class Tower(TileCollection):
@@ -78,16 +86,6 @@ class FactoryDisplay(TileCollection):
     def __array_finalize__(self, obj):
         pass
 
-    def fill_factory_display(self, bag):
-        pass
-
-    @classmethod
-    def from_bag(cls, bag: TileBag) -> FactoryDisplay:
-        """Create the initial factory displays drawing tiles from the tile bag"""
-        factory_display = FactoryDisplay()
-        factory_display.fill_factory_display(bag)
-        return factory_display
-
 
 class SupplySpace(TileCollection):
     """10 tile supply to draw from when draw positions are filled e.g.,
@@ -103,17 +101,6 @@ class SupplySpace(TileCollection):
 
     def __array_finalize__(self, obj):
         pass
-
-    def fill_supply_space(self, bag):
-        pass
-        # for i in range(10):
-        #     self.tile_count[bag.draw()] += 1
-
-    @classmethod
-    def from_bag(cls, bag: TileBag) -> SupplySpace:
-        supply_space = SupplySpace()
-        supply_space.fill_supply_space(bag)
-        return supply_space
 
 
 class PlayerReserve(TileCollection):
