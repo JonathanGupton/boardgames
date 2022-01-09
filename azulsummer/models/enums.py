@@ -16,6 +16,18 @@ class TileColors(IntEnum):
 
 
 @unique
+class WildTiles(IntEnum):
+    """Wild tiles in round order"""
+
+    Purple = 0
+    Green = 1
+    Orange = 2
+    Yellow = 3
+    Blue = 4
+    Red = 5
+
+
+@unique
 class Phase(Enum):
     """Enum representing each phase in a round"""
 
