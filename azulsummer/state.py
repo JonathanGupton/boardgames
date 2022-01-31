@@ -3,7 +3,7 @@ from typing import Optional, Sequence
 
 from azulsummer.models.board import PlayerBoard
 from azulsummer.models.enums import (
-    TileColors,
+    TileColor,
     Phase,
     PlayerActions as pa,
     StateActions as sa,
@@ -22,8 +22,14 @@ from azulsummer.models.tilecollections import (
 PLAYER_TO_DISPLAY_RATIO = {2: 5, 3: 7, 4: 9}
 
 # Wild Tiles in round order
-WILD_TILES = [TileColors.Purple, TileColors.Green, TileColors.Orange, TileColors.Yellow, TileColors.Blue,
-              TileColors.Red]
+WILD_TILES = [
+    TileColor.Purple,
+    TileColor.Green,
+    TileColor.Orange,
+    TileColor.Yellow,
+    TileColor.Blue,
+    TileColor.Red,
+]
 
 # TODO:  Create a to-file method or write bytes to postgres
 class State:
@@ -44,36 +50,40 @@ class State:
         "start_player",
         "supply",
         "turn",
-        "wild_tile"
+        "wild_tile",
     ]
 
-    def __init__(self, players: Sequence[Player]):
-        n_players = len(players)
-        self.players = players
-        self.boards = [PlayerBoard() for _ in range(n_players)]
-        self.reserves = [PlayerReserve() for _ in range(n_players)]
-        self.score = Score(n_players)
+    def __init__(self, players: Sequence[Player], initialize: bool = True):
+        if initialize:
+            n_players = len(players)
+            self.players = players
+            self.boards = [PlayerBoard() for _ in range(n_players)]
+            self.reserves = [PlayerReserve() for _ in range(n_players)]
+            self.score = Score(n_players)
 
-        # Global tile resources
-        self.bag = TileBag()
-        self.supply = SupplySpace()
-        self.factory_displays = [
-            FactoryDisplay() for _ in range(PLAYER_TO_DISPLAY_RATIO[len(players)])
-        ]
-        self.middle = MiddleOfFactory()
+            # Global tile resources
+            self.bag = TileBag()
+            self.supply = SupplySpace()
+            self.factory_displays = [
+                FactoryDisplay() for _ in range(PLAYER_TO_DISPLAY_RATIO[n_players])
+            ]
+            self.middle = MiddleOfFactory()
 
-        # Phase, order, turn values
-        self.turn: int = 0
-        self.phase: Optional[Phase] = Phase.AcquireTile
-        self.round: int = 0
-        self.current_player: int = 0
-        self.start_player: Optional[int] = None
-        self.wild_tile = WILD_TILES[self.round]
+            # Phase, order, turn values
+            self.turn: int = 0
+            self.phase: Phase = Phase.AcquireTile
+            self.round: int = 0
+            self.current_player: int = 0
+            self.start_player: Optional[int] = None
+            self.wild_tile = WILD_TILES[self.round]
 
-        # Previous and future actions
-        self.action_history = deque()
-        self.available_actions = []
-        self.next_action = deque()
+            # Previous and future actions
+            self.action_history = deque()
+            self.available_actions = []
+            self.next_action = deque()
+
+            # initialize starting actions
+            self.next_action.append()
 
     def assign_start(self) -> None:
         """Assign the current player to start and logs the action"""
@@ -87,7 +97,10 @@ class State:
         """Update the player score by points at the current player index"""
         self.score.update(self.current_player, points)
 
-    def draw_from_middle(self, color: TileColors) -> int:
+    def add_tiles_to_player_reserve(self, tiles) -> None:
+        pass
+
+    def draw_from_middle(self, color: TileColor) -> int:
         """
         Transfer tiles from middle to the player at the current player index
 
@@ -95,8 +108,10 @@ class State:
         Otherwise returns all tiles of that color and one wild tile (if available)
         Logs the action performed at the end
 
-        :arg color of the tile drawn as TileColor value
-        :return number of tiles drawn
+        Args:
+            The color of the tile drawn as TileColor value.
+        Returns:
+             number of tiles drawn
         """
 
         if color == self.wild_tile:
@@ -114,7 +129,10 @@ class State:
                 drawn_tiles += 1
         return drawn_tiles
 
-    def apply_action(self, action, *args, **kwargs):
+    def draw_from_factory_display(self, display: int, color: TileColor) -> int:
+        return 0
+
+    def apply_action(self, action, *args):
         """Method containing game flow logic for the game"""
         match [action, self.phase, self.round]:
             case [pa.DrawFromFactoryDisplay, Phase.AcquireTile, _]:
@@ -127,13 +145,12 @@ class State:
                 if self.start_player is None:
                     self.assign_start()
                     self.update_score(n_tiles_drawn)
-
             case [pa.PlaceTile, Phase.PlayTiles, _] if self.round < 6:
                 pass
 
-            case [_, Phase.PrepareNextRound, _] if self.round < 6:
+            case [_, Phase.PrepareNextRound, round] if self.round < 6:
                 pass
-            case [_, Phase.PrepareNextRound, _] if self.round == 6:
+            case [_, Phase.PrepareNextRound, round] if self.round == 6:
                 # final score
                 # declare winner
                 pass
