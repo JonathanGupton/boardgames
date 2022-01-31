@@ -17,6 +17,7 @@ class TileCollection(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
 
     def __repr__(self):
@@ -47,6 +48,7 @@ class TileTransition(TileCollection):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
 
 
@@ -64,6 +66,7 @@ class TileBag(TileCollection):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
 
     def draw(self) -> int:
@@ -85,6 +88,7 @@ class Tower(TileCollection):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
 
 
@@ -99,37 +103,38 @@ class FactoryDisplay(TileCollection):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
 
     def draw(self, color: TileColor, n_tiles: Optional[int] = None) -> TileTransition:
         """
         Draw the given tile type from the display.
 
-        :argument
-            color: TileColor - The color to be drawn
-            n_tiles: Optional[int] - The number of tiles to be drawn.  The
-            default value of None returns all tiles of that color.  When
-            specified only n_tiles will be returned of the given color.
+        Args:
+          color: The tile color to draw.
+          n_tiles: The number of tiles to draw.  The default value of
+            None returns all tiles of that color.  Only n_tiles will be
+            returned of the given color when specified.
 
-        :returns
-            TileTransition object with the count of tiles drawn of the given color
+        Returns:
+          A TileTransition object with the count of tiles drawn of the given
+            color.
 
-        :exception
-            Value error when n_tiles drawn is greater than available tiles
+        Raises:
+            ValueError: If n_tiles is greater than available tiles for the color.
         """
 
         tile_transition = TileTransition()
         if n_tiles is None:
-            tile_transition[color] = self[color]
-            self[color] = 0
+            tile_transition[color], self[color] = self[color], 0
         else:
-            if n_tiles <= self[color]:
-                self[color] -= n_tiles
-                tile_transition[color] += n_tiles
-            else:
+            if n_tiles > self[color]:
                 raise ValueError(
                     f"Attempted draw of {n_tiles} of {TileColor(color).name} is greater than the available {self[color]} tiles"
                 )
+            else:
+                self[color] -= n_tiles
+                tile_transition[color] += n_tiles
         return tile_transition
 
 
@@ -147,6 +152,7 @@ class SupplySpace(TileCollection):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
 
 
@@ -161,6 +167,7 @@ class PlayerReserve(TileCollection):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
 
 
@@ -175,4 +182,5 @@ class MiddleOfFactory(TileCollection):
         return obj
 
     def __array_finalize__(self, obj):
+        """Numpy method required for subclassing np.array"""
         pass
