@@ -4,7 +4,7 @@ from enum import Enum, IntEnum, unique, auto
 
 
 @unique
-class TileColors(IntEnum):
+class TileColor(IntEnum):
     """Tile color indices"""
 
     Orange = 0
@@ -28,7 +28,7 @@ class WildTiles(IntEnum):
 
 
 @unique
-class Phase(Enum):
+class Phase(IntEnum):
     """Enum representing each phase in a round"""
 
     AcquireTile = auto()
@@ -40,8 +40,9 @@ class Phase(Enum):
 class PlayerActions(Enum):
     """Enum representing each possible player action"""
 
-    DrawFromSupply = auto()
+    AcquireTile = auto()
     DrawFromFactoryDisplay = auto()
+    DrawFromSupply = auto()
     DrawFromMiddle = auto()
     PlaceTile = auto()
     DiscardExcessTiles = auto()
@@ -56,11 +57,12 @@ class StateActions(Enum):
     AdvanceTurn = auto()
     AdvanceWildTileIndex = auto()
     AssignStartPlayer = auto()
+    DeclareWinner = auto()
+    EndOfGameScoring = auto()
     IncrementScore = auto()
     LoadBagFromTower = auto()
-    LoadFactoryDisplayTiles = auto()
-    LoadSupplyTiles = auto()
-    LoadTowerTiles = auto()
-    LoadMiddleTiles = auto()
+    LoadTilesToFactoryDisplay = auto()
+    LoadTilesToMiddle = auto()
+    LoadTilesToSupply = auto()
+    LoadTilesToTower = auto()
     UnassignStartPlayer = auto()
-    ScoreEndOfGame = auto()
