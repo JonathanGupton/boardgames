@@ -1,16 +1,14 @@
 from __future__ import annotations
-from typing import Iterable, Optional
+
+from typing import Sequence
 from uuid import uuid4
 
 from azulsummer.models.player import Player
 from azulsummer.state import State
-from azulsummer.components import TileColor
-from azulsummer.models.tilecollections import TileBag, Tower, FactoryDisplay, SupplySpace
 
 
 class Game:
-
-    def __init__(self, players: Iterable[Player], initialize: bool = True):
+    def __init__(self, players: Sequence[Player], initialize: bool = True):
         """Initiate a game"""
         if initialize:
             self.id = str(uuid4())
@@ -19,32 +17,16 @@ class Game:
     def play(self):
         pass
 
-    def next_player_action(self):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        player = self.state.players[self.state.current_player]
+        self.actions = self.state.available_actions
+
+        action = None  # decision function for player
+
+        return self.execute(action)
+
+    def execute(self, action):
         pass
-
-    def execute(self):
-        pass
-
-    @property
-    def winner(self) -> Optional[Player]:
-        pass
-
-
-class Score:
-    pass
-
-
-class Turn:
-    pass
-
-
-class Phase:
-    pass
-
-
-class AcquireTiles(Phase):
-    pass
-
-
-class PlayTilesAndScore(Phase):
-    pass
