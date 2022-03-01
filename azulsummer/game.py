@@ -9,13 +9,21 @@ from azulsummer.state import State
 
 class Game:
     def __init__(self, players: Sequence[Player], initialize: bool = True):
-        """Initiate a game"""
+        """Initiate a game
+
+        Players:  A sequence of class Player.  Player at index 0 will be the
+          starting player.
+
+
+
+        """
         if initialize:
             self.id = str(uuid4())
             self.state = State(players)
 
     def play(self):
-        pass
+        while self.state.next_action:
+            action, args = self.state.next_action.popleft()
 
     def __iter__(self):
         return self

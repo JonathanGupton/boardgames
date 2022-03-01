@@ -1,21 +1,21 @@
 from collections import deque
-from typing import Optional, Sequence
+from typing import Sequence
 
 from azulsummer.models.board import PlayerBoard
 from azulsummer.models.enums import (
     TileColor,
     Phase,
-    PlayerActions as pa,
-    StateActions as sa,
+    PlayerActions as P,
+    StateActions as S,
 )
 from azulsummer.models.player import Player
 from azulsummer.models.score import Score
 from azulsummer.models.tilecollections import (
-    TileBag,
-    MiddleOfFactory,
     FactoryDisplay,
-    SupplySpace,
+    FactoryMiddle,
     PlayerReserve,
+    SupplySpace,
+    TileBag,
 )
 
 # Number of players : Number of factory displays ratio
@@ -67,14 +67,14 @@ class State:
             self.factory_displays = [
                 FactoryDisplay() for _ in range(PLAYER_TO_DISPLAY_RATIO[n_players])
             ]
-            self.middle = MiddleOfFactory()
+            self.middle = FactoryMiddle()
 
             # Phase, order, turn values
             self.turn: int = 0
             self.phase: Phase = Phase.AcquireTile
             self.round: int = 0
             self.current_player: int = 0
-            self.start_player: Optional[int] = None
+            self.start_player: int = 0
             self.wild_tile = WILD_TILES[self.round]
 
             # Previous and future actions
@@ -83,12 +83,17 @@ class State:
             self.next_action = deque()
 
             # initialize starting actions
-            self.next_action.append()
+            self.next_action.extend([
+                (S.LoadTilesToSupply, 10),
+                (S.LoadTilesToFactoryDisplay,),
+                (S.IncrementScore, -5),
+                (P.AcquireTile,)
+            ])
 
     def assign_start(self) -> None:
         """Assign the current player to start and logs the action"""
         self.start_player = self.current_player
-        self.action_history.append(sa.AssignStartPlayer)
+        self.action_history.append(S.AssignStartPlayer)
 
     def advance_player(self) -> None:
         pass
@@ -134,23 +139,30 @@ class State:
 
     def apply_action(self, action, *args):
         """Method containing game flow logic for the game"""
-        match [action, self.phase, self.round]:
-            case [pa.DrawFromFactoryDisplay, Phase.AcquireTile, _]:
+        match [self.phase, action, self.round]:
+
+            case [Phase.AcquireTile, _, _]:
                 pass
 
-            case [pa.DrawFromMiddle, Phase.AcquireTile, _]:
+            case [Phase.AcquireTile, P.DrawFromFactoryDisplay, _]:
+                pass
+
+            case [Phase.AcquireTile, P.DrawFromMiddle, _]:
                 n_tiles_drawn = self.draw_from_middle(*args)
 
                 # First player to draw from the middle gets pushed back n_tiles
                 if self.start_player is None:
                     self.assign_start()
                     self.update_score(n_tiles_drawn)
-            case [pa.PlaceTile, Phase.PlayTiles, _] if self.round < 6:
+
+            case [Phase.PlayTiles, P.PlaceTile, _] if self.round < 6:
                 pass
 
-            case [_, Phase.PrepareNextRound, round] if self.round < 6:
+            case [Phase.PrepareNextRound, S.LoadTilesToFactoryDisplay, round] \
+                if self.round < 6:
                 pass
-            case [_, Phase.PrepareNextRound, round] if self.round == 6:
+
+            case [Phase.PrepareNextRound, _, round] if self.round == 6:
                 # final score
                 # declare winner
                 pass

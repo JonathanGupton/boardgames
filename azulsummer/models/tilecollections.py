@@ -171,7 +171,7 @@ class PlayerReserve(TileCollection):
         pass
 
 
-class MiddleOfFactory(TileCollection):
+class FactoryMiddle(TileCollection):
     """Tiles holding un-drawn factory display tiles"""
 
     INITIAL_TILE_COUNT = 0

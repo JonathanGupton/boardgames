@@ -40,7 +40,7 @@ class Phase(IntEnum):
 class PlayerActions(Enum):
     """Enum representing each possible player action"""
 
-    AcquireTile = auto()
+    AcquireTiles = auto()
     DrawFromFactoryDisplay = auto()
     DrawFromSupply = auto()
     DrawFromMiddle = auto()

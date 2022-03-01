@@ -1,8 +1,6 @@
 from __future__ import annotations
-from array import array
 
-from azulsummer.components import TileColor
-
+import numpy as np
 
 N_STARS = 7  # 6 stars + 1 rainbow star
 N_PILLARS = 6
@@ -125,11 +123,9 @@ class PlayerBoard:
         41,
     }
 
+    # TODO:  Make this a bit array?
     def __init__(self) -> None:
-        self.board = array(
-            "B",
-            [False] * (N_STARS * len(TileColor) + N_PILLARS + N_WINDOWS + N_STATUES),
-        )
+        self.board = np.zeros(shape=(10, 6), dtype="B")
 
     def __repr__(self) -> str:
         pass
@@ -146,6 +142,12 @@ class PlayerBoard:
 
     def check_window_position(self, position: int):
         pass
+
+    def is_star_complete(self, star) -> bool:
+        return all(self.board[star])
+
+    def are_tile_values_complete(self, tile_value: int) -> bool:
+        return all(self.board[0:7, tile_value])
 
 
 """
