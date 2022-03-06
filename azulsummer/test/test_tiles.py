@@ -12,7 +12,7 @@ def test_instantiation_has_132_tiles(n_players, n_tiles):
     assert t._tiles.sum() == n_tiles
 
 
-@pytest.mark.parametrize("n_players,n_rows", [(2, 23), (3, 32), (4, 41)])
+@pytest.mark.parametrize("n_players,n_rows", [(2, 25), (3, 35), (4, 45)])
 def test_n_players_n_tile_rows(n_players, n_rows):
     """Test that the correct number of rows are instantiated based on the
     number of players.
@@ -31,4 +31,8 @@ def test_n_players_out_of_range_error(n_players):
 
 
 def test_initial_supply_load():
+    pass
+
+
+def test_refill_bag_from_tower():
     pass

@@ -1,6 +1,8 @@
 """Module containing the Tile class"""
 from __future__ import annotations
 
+from typing import Optional
+
 import numpy as np
 
 from azulsummer.models.enums import TileColor, PLAYER_TO_DISPLAY_RATIO
@@ -19,7 +21,7 @@ class Tiles:
     array.
     """
 
-    # Number of each type of tile
+    # There are 22 tiles for each of the 6 colors for a total of 132 tiles
     _TILE_COUNT: int = 22
 
     # Indices for the tile locations that do not change based on player count
@@ -29,27 +31,47 @@ class Tiles:
     _SUPPLY_INDEX: int = 3
     _FACTORY_DISPLAY_INDEX: int = 4
 
-    # Number of rows assigned for each player board
+    # 7 rows of 6 are assigned for each player's board
+    # 1 row for each color and 1 row for the 'wild' color
     _PLAYER_BOARD_RANGE: int = 7
 
-    def __init__(self, n_players: int, seed: int = 0) -> None:
+    def __init__(self, n_players: int, seed: Optional[int] = None) -> None:
+        # Check for a valid number of players
         if (n_players < 2) or (n_players > 4):
-            raise ValueError(f"{n_players} players is invalid.  Must be 2, 3, or 4 players.")
+            raise ValueError(
+                f"{n_players} players is invalid.  " f"Must be 2, 3, or 4 players."
+            )
 
-        self.seed: int = seed
+        # Set the seed and random number generator
+        if seed is None:
+            seed = 0
+        self.seed = seed
+        self.rng: np.random.Generator = np.random.default_rng(seed)
+
         self.n_players: int = n_players
         self.n_factory_displays: int = PLAYER_TO_DISPLAY_RATIO[n_players]
-        self.player_index: int = Tiles._FACTORY_DISPLAY_INDEX + self.n_factory_displays
+        self.player_board_index: int = (
+                Tiles._FACTORY_DISPLAY_INDEX + self.n_factory_displays
+        )
+        self.player_reserve_index: int = self.player_board_index + (
+                n_players * Tiles._PLAYER_BOARD_RANGE
+        )
 
         n_rows = (
                 4  # bag, tower, table center, and supply rows
                 + self.n_factory_displays
                 + (self.n_players * Tiles._PLAYER_BOARD_RANGE)
+                + self.n_players  # player reserves
         )
         self._tiles: np.ndarray = np.zeros((n_rows, len(TileColor)), "B")
 
         # Create the initial distribution of 22 tiles * 6 tile colors
-        self._tiles[0] = np.array([Tiles._TILE_COUNT] * len(TileColor), "B")
+        self._tiles[0] += np.array([Tiles._TILE_COUNT] * len(TileColor), "B")
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}(n_players={self.n_players}, seed={self.seed})"
+        )
 
     def get_bag_view(self) -> np.ndarray:
         """Get the distribution of tiles in the bag."""
@@ -88,8 +110,19 @@ class Tiles:
 
     def get_player_boards_view(self) -> np.ndarray:
         """Get the distribution of tiles across all players' boards."""
-        return self._tiles[self.player_index:]
+        return self._tiles[self.player_board_index:]
+
+    def get_player_reserves_view(self) -> np.ndarray:
+        """Get the distribution of tiles across all player reserves"""
+        pass
+
+    def get_player_n_reserve_view(self, player_n: int) -> np.ndarray:
+        """Get the distribution of tiles in reserve that are held by player n."""
+        pass
 
     def fill_supply_space_from_bag(self) -> None:
         """Load the supply space from the bag."""
+        pass
+
+    def refill_bag_from_tower(self):
         pass
