@@ -36,3 +36,20 @@ def test_initial_supply_load():
 
 def test_refill_bag_from_tower():
     pass
+
+
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_validate_invalid_tile_count(n_players):
+    t = Tiles(n_players)
+    t._tiles[0][0] += 1
+    with pytest.raises(ValueError):
+        t.validate_tile()
+
+
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_validate_invalid_column_tile_count(n_players):
+    t = Tiles(n_players)
+    t._tiles[0][0] += 1
+    t._tiles[0][1] -= 1
+    with pytest.raises(ValueError):
+        t.validate_tile()

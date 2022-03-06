@@ -110,7 +110,7 @@ class Tiles:
 
     def get_player_boards_view(self) -> np.ndarray:
         """Get the distribution of tiles across all players' boards."""
-        return self._tiles[self.player_board_index:]
+        pass
 
     def get_player_board_n_view(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given player board.
@@ -131,9 +131,42 @@ class Tiles:
         """Get the distribution of tiles in reserve that are held by player n."""
         pass
 
-    def fill_supply_space_from_bag(self) -> None:
+    def draw_from_bag(self, n_tiles: int, destination: int) -> None:
+        """Draw tiles from the bag and transfer the tiles to the destination.
+
+        If n_tiles exceeds the number of tiles in the bag, tiles in the tower
+        will be transferred to the bag.
+
+        If n_tiles exceeds the number of tiles in the bag and tower, only those
+        in the bag will be transferred.
+
+        Args:
+            n_tiles: integer number of tiles to move
+            destination:  integer index of the destination to receive the tiles
+
+        Returns:
+            None
+        """
+
+    def fill_supply(self) -> None:
         """Load the supply space from the bag."""
         pass
 
     def refill_bag_from_tower(self):
         pass
+
+    def validate_tile(self) -> None:
+        """Validate that the _tile object contains exactly 132 tiles and each
+        column contains exactly 22 tiles.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError if an invalid number of tiles are found in the rows or
+            columns.
+        """
+        if self._tiles.sum() != 132:
+            raise ValueError(f"{self._tiles.sum()} is an invalid number of tiles.  Must be 132 tiles.")
+        if self._tiles.sum(axis=0) != np.ndarray([22, 22, 22, 22, 22, 22], "B"):
+            raise ValueError(f"{self._tiles.sum(axis=0)} is invalid.  Only 22 tiles are allowed per tile type.")
