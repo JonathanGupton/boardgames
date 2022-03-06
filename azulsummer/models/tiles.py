@@ -8,7 +8,7 @@ import numpy as np
 from azulsummer.models.enums import TileColor, PLAYER_TO_DISPLAY_RATIO
 
 # Referenced in the Tiles.validate_tiles() method
-VALID_TILE_DISTRIBUTION = np.ndarray([22, 22, 22, 22, 22, 22], "B")
+VALID_TILE_DISTRIBUTION = np.array([22, 22, 22, 22, 22, 22], "B")
 
 
 class Tiles:
@@ -66,7 +66,7 @@ class Tiles:
                 + (self.n_players * Tiles._PLAYER_BOARD_RANGE)
                 + self.n_players  # player reserves
         )
-        self._tiles: np.ndarray = np.zeros((n_rows, len(TileColor)), "B")
+        self._tiles: np.array = np.zeros((n_rows, len(TileColor)), "B")
 
         # Create the initial distribution of 22 tiles * 6 tile colors
         self._tiles[0] += np.array([Tiles._TILE_COUNT] * len(TileColor), "B")
@@ -75,6 +75,8 @@ class Tiles:
         return (
             f"{self.__class__.__name__}(n_players={self.n_players}, seed={self.seed})"
         )
+
+    """ VIEWS """
 
     def get_bag_view(self) -> np.ndarray:
         """Get the distribution of tiles in the bag."""
@@ -134,6 +136,8 @@ class Tiles:
         """Get the distribution of tiles in reserve that are held by player n."""
         pass
 
+    """ MOVE TILES AROUND _tile PROPERTY """
+
     def draw_from_bag(self, n_tiles: int, destination: int) -> None:
         """Draw tiles from the bag and transfer the tiles to the destination.
 
@@ -150,6 +154,7 @@ class Tiles:
         Returns:
             None
         """
+        pass
 
     def fill_supply(self) -> None:
         """Load the supply space from the bag."""
@@ -157,6 +162,8 @@ class Tiles:
 
     def refill_bag_from_tower(self):
         pass
+
+    """ VALIDATION """
 
     def validate_tile(self) -> None:
         """Validate that the _tile object contains exactly 132 tiles and each
@@ -169,6 +176,7 @@ class Tiles:
             ValueError if an invalid number of tiles are found in the rows or
             columns.
         """
-        if self._tiles.sum(axis=0) != VALID_TILE_DISTRIBUTION:
-            raise ValueError(f"{self._tiles.sum(axis=0)} is invalid."
-                             f"  Only 22 tiles are allowed per tile type.")
+        if np.array_equal(self._tiles.sum(axis=0), VALID_TILE_DISTRIBUTION):
+            return
+        raise ValueError(f"{self._tiles.sum(axis=0)} is invalid. Only 22 tiles"
+                         f" are allowed per tile type.")
