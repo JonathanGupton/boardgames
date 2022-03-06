@@ -17,8 +17,8 @@ class Tiles:
 
     All interactions with the game tiles are managed through the Tiles class.
 
-    Each group of tiles is represented as a 6-wide row in a single 2D numpy
-    array.
+    Each group of tiles is represented as a 6-wide row in 2D numpy
+    array _tiles.
     """
 
     # There are 22 tiles for each of the 6 colors for a total of 132 tiles
@@ -89,6 +89,14 @@ class Tiles:
         """Get the distribution of tiles in the supply."""
         return self._tiles[Tiles._SUPPLY_INDEX]
 
+    def get_factory_displays_view(self) -> np.ndarray:
+        """Get the distribution of tiles across all factory displays.
+
+        Returns:
+             The tile distributions as a 2D numpy array.
+        """
+        return self._tiles
+
     def get_factory_display_n_view(self, factory_display_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given factory display.
 
@@ -100,17 +108,20 @@ class Tiles:
         """
         pass
 
-    def get_factory_displays_view(self) -> np.ndarray:
-        """Get the distribution of tiles across all factory displays.
-
-        Returns:
-             The tile distributions as a 2D numpy array.
-        """
-        return self._tiles
-
     def get_player_boards_view(self) -> np.ndarray:
         """Get the distribution of tiles across all players' boards."""
         return self._tiles[self.player_board_index:]
+
+    def get_player_board_n_view(self, player_n: int) -> np.ndarray:
+        """Get the distribution of tiles for the given player board.
+
+        Args:
+            player_n: The 0-indexed integer index of the player
+
+        Returns:
+            The player board as a 2D 7x6 numpy array
+        """
+        pass
 
     def get_player_reserves_view(self) -> np.ndarray:
         """Get the distribution of tiles across all player reserves"""
