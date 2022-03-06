@@ -7,6 +7,9 @@ import numpy as np
 
 from azulsummer.models.enums import TileColor, PLAYER_TO_DISPLAY_RATIO
 
+# Referenced in the Tiles.validate_tiles() method
+VALID_TILE_DISTRIBUTION = np.ndarray([22, 22, 22, 22, 22, 22], "B")
+
 
 class Tiles:
     """Class to manage the distribution of all game tiles.
@@ -166,7 +169,6 @@ class Tiles:
             ValueError if an invalid number of tiles are found in the rows or
             columns.
         """
-        if self._tiles.sum() != 132:
-            raise ValueError(f"{self._tiles.sum()} is an invalid number of tiles.  Must be 132 tiles.")
-        if self._tiles.sum(axis=0) != np.ndarray([22, 22, 22, 22, 22, 22], "B"):
-            raise ValueError(f"{self._tiles.sum(axis=0)} is invalid.  Only 22 tiles are allowed per tile type.")
+        if self._tiles.sum(axis=0) != VALID_TILE_DISTRIBUTION:
+            raise ValueError(f"{self._tiles.sum(axis=0)} is invalid."
+                             f"  Only 22 tiles are allowed per tile type.")
