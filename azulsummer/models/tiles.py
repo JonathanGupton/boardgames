@@ -1,7 +1,7 @@
 """Module containing the Tile class"""
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 
@@ -136,7 +136,26 @@ class Tiles:
         """Get the distribution of tiles in reserve that are held by player n."""
         pass
 
-    """ MOVE TILES AROUND _tile PROPERTY """
+    """ MOVE TILES AROUND """
+
+    def move_tiles(
+            self, source: int, destination: int, tile: Union[TileColor, int], quantity: int
+    ) -> None:
+        """
+        Move tiles between two tile locations.
+
+        Args:
+            source:  Integer tile index from which tiles are sent.
+            destination: Integer tile index where tiles are received.
+            tile: Integer tile color to be moved.
+            quantity: Integer number of tiles to move.
+
+        Returns:
+            None
+        """
+        self._tiles[source][tile] -= quantity
+        self._tiles[destination][tile] += quantity
+        self.validate_tile()
 
     def draw_from_bag(self, n_tiles: int, destination: int) -> None:
         """Draw tiles from the bag and transfer the tiles to the destination.
@@ -178,5 +197,7 @@ class Tiles:
         """
         if np.array_equal(self._tiles.sum(axis=0), VALID_TILE_DISTRIBUTION):
             return
-        raise ValueError(f"{self._tiles.sum(axis=0)} is invalid. Only 22 tiles"
-                         f" are allowed per tile type.")
+        raise ValueError(
+            f"{self._tiles.sum(axis=0)} is invalid. Only 22 tiles"
+            f" are allowed per tile type."
+        )
