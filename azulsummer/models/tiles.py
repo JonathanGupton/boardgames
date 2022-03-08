@@ -1,7 +1,7 @@
 """Module containing the Tile class"""
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Optional
 
 import numpy as np
 
@@ -34,7 +34,7 @@ class Tiles:
     _SUPPLY_INDEX: int = 3
     _FACTORY_DISPLAY_INDEX: int = 4
 
-    # 7 rows of 6 are assigned for each player's board which is
+    # 7 rows of 6 are assigned for each player's board which are
     #   1 row for each color and 1 row for the 'wild' color
     _PLAYER_BOARD_RANGE: int = 7
 
@@ -157,8 +157,7 @@ class Tiles:
             self,
             source: int,
             destination: int,
-            tile: Union[TileColor, int],
-            quantity: int = 1,
+            tiles: np.ndarray,
     ) -> None:
         """
         Move tiles between two tile locations.
@@ -166,14 +165,13 @@ class Tiles:
         Args:
             source:  Integer tile index from which tiles are sent.
             destination: Integer tile index where tiles are received.
-            tile: Integer tile color to be moved.
-            quantity: Integer number of tiles to move.
+            tiles: 6 width ndarray with corresponding tiles to be moved.
 
         Returns:
             None
         """
-        self._tiles[source][tile] -= quantity
-        self._tiles[destination][tile] += quantity
+        self._tiles[destination] += tiles
+        self._tiles[source] -= tiles
         self.validate_tile()
 
     def draw_from_bag(self, n_tiles: int, destination: int) -> None:
@@ -198,8 +196,8 @@ class Tiles:
             pass
 
         # multivariate_hypergeometric draws tiles without replacement from a
-        # 1D array of tiles e.g. [22, 22, 22, 22, 22, 22]
-        # results in a distribution of drawn tiles in a 1x6 shape such as
+        # 1-D array of tiles e.g. [22, 22, 22, 22, 22, 22] results
+        # in a distribution of drawn tiles in a 1x6 shape such as
         # [1, 2, 1, 3, 1, 1].
         delta = self.rng.multivariate_hypergeometric(
             self._tiles[self._BAG_INDEX], n_tiles
@@ -207,8 +205,7 @@ class Tiles:
 
     def refill_bag_from_tower(self) -> None:
         """Move all tiles from the Tower to the Bag."""
-        self._tiles[self._BAG_INDEX] += self._tiles[self._TOWER_INDEX]
-        self._tiles[self._TOWER_INDEX] *= 0
+        self.move_tiles(self._TOWER_INDEX, self._BAG_INDEX, self._tiles[self._TOWER_INDEX])
         self.validate_tile()
 
     def fill_supply(self) -> None:
