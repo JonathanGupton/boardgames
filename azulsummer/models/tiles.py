@@ -151,6 +151,14 @@ class Tiles:
         """Get the distribution of tiles in reserve that are held by player n."""
         pass
 
+    def is_supply_full(self) -> bool:
+        """Check if the supply is filled to 10 tiles.
+
+        Returns:
+            Bool:  True if the supply has 10 tiles, False if it has <10 tiles.
+        """
+        return self.get_supply_quantity() == self._SUPPLY_MAX
+
     """ MOVE TILES AROUND """
 
     def move_tiles(
@@ -205,8 +213,9 @@ class Tiles:
 
     def refill_bag_from_tower(self) -> None:
         """Move all tiles from the Tower to the Bag."""
-        self.move_tiles(self._TOWER_INDEX, self._BAG_INDEX, self._tiles[self._TOWER_INDEX])
-        self.validate_tile()
+        self.move_tiles(
+            self._TOWER_INDEX, self._BAG_INDEX, self._tiles[self._TOWER_INDEX]
+        )
 
     def fill_supply(self) -> None:
         """Load the supply space from the bag."""
