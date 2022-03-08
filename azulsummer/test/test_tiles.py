@@ -3,7 +3,6 @@
 import numpy as np
 import pytest
 
-from azulsummer.models.enums import TileColor
 from azulsummer.models.tiles import VALID_TILE_DISTRIBUTION, Tiles
 
 
@@ -61,24 +60,16 @@ def test_tiles_equals_valid_tile_distribution():
 def test_move_tiles_with_integer_tile():
     """Test moving tiles between two tile locations with int tile location"""
     t = Tiles(2)
-    t.move_tiles(0, 1, 0, 22)
+    t.move_tiles(0, 1, np.array([22, 0, 0, 0, 0, 0], "B"))
     assert t._tiles[0][0] == 0
     assert t._tiles[1][0] == 22
-
-
-def test_move_tiles_with_tilecolor_enum():
-    """Test moving tiles between two tile locations with IntEnum tile location"""
-    t = Tiles(2)
-    t.move_tiles(0, 1, TileColor.Orange, 22)
-    assert t._tiles[0][TileColor.Orange] == 0
-    assert t._tiles[1][TileColor.Orange] == 22
 
 
 def test_move_tiles_value_error():
     """Test a move that results in an invalid tile value"""
     t = Tiles(2)
     with pytest.raises(ValueError):
-        t.move_tiles(0, 1, TileColor.Orange, -1)  # overflow results in 255
+        t.move_tiles(0, 1, np.array([-1, 0, 0, 0, 0, 0], "B"))  # overflow results in 255
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
@@ -96,7 +87,8 @@ def test_get_tower_quantity_is_0_at_start(n_players):
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_refill_bag_from_tower(n_players):
     t = Tiles(n_players)
-    t.move_tiles(0, 1, 0, 22)
+    t._tiles[t._BAG_INDEX] *= 0
+    t._tiles[t._TOWER_INDEX] += 22
     t.refill_bag_from_tower()
     assert np.array_equal(t.get_bag_view(), np.array([22, 22, 22, 22, 22, 22]))
     assert np.array_equal(t.get_tower_view(), np.array([0, 0, 0, 0, 0, 0]))
@@ -112,3 +104,11 @@ def test_draw_from_bag_more_than_available_from_bag_but_enough_in_tower():
 
 def test_draw_from_bag_more_than_available_in_bag_and_tower():
     pass
+
+
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_is_supply_full_is_true_at_instantiation(n_players):
+    """Test that the is_supply_full() method returns True when the
+     Tile class is instantiated.  Filling the supply is part of setup."""
+    t = Tiles(n_players)
+    assert t.is_supply_full()

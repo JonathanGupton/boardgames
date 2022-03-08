@@ -74,6 +74,9 @@ class Tiles:
         # Create the initial distribution of 22 tiles * 6 tile colors
         self._tiles[0] += np.array([Tiles._TILE_COUNT] * len(TileColor), "B")
 
+        # Fill supply with 10 tiles
+        self.fill_supply()
+
     def __repr__(self):
         return (
             f"{self.__class__.__name__}(n_players={self.n_players}, seed={self.seed})"
@@ -198,10 +201,6 @@ class Tiles:
         Returns:
             None
         """
-        if (self.get_bag_quantity() < n_tiles) and (
-                (self.get_bag_quantity() + self.get_tower_quantity()) >= n_tiles
-        ):
-            pass
 
         # multivariate_hypergeometric draws tiles without replacement from a
         # 1-D array of tiles e.g. [22, 22, 22, 22, 22, 22] results
@@ -210,6 +209,7 @@ class Tiles:
         delta = self.rng.multivariate_hypergeometric(
             self._tiles[self._BAG_INDEX], n_tiles
         ).astype("B")
+        self.move_tiles(self._BAG_INDEX, destination, delta)
 
     def refill_bag_from_tower(self) -> None:
         """Move all tiles from the Tower to the Bag."""
