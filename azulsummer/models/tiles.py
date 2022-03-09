@@ -45,6 +45,14 @@ class Tiles:
     FACTORY_DISPLAY_MAX: int = 4
 
     def __init__(self, n_players: int, seed: Optional[int] = None) -> None:
+        """Initialize a Tile class
+
+        Tiles begin with the 132 available tiles assigned to the bag.
+
+        Args:
+            n_players:  The number of players as an integer
+            seed:  The RNG seed to be used.
+        """
         # Check for a valid number of players
         if (n_players < 2) or (n_players > 4):
             raise ValueError(
@@ -133,11 +141,10 @@ class Tiles:
         Returns:
              The tile distribution as a numpy array.
         """
-        pass
+        return self.get_factory_displays_view()[factory_display_n]
 
     def get_player_boards_view(self) -> np.ndarray:
         """Get the distribution of tiles across all players' boards."""
-        pass
 
     def get_nth_player_board_view(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given player board.
