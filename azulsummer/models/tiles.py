@@ -1,7 +1,7 @@
 """Module containing the Tile class"""
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 
@@ -151,6 +151,7 @@ class Tiles:
 
     def get_player_boards_view(self) -> np.ndarray:
         """Get the distribution of tiles across all players' boards."""
+        return self.tiles[self.player_board_index: self.player_reserve_index]
 
     def get_nth_player_board_view(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given player board.
@@ -161,15 +162,18 @@ class Tiles:
         Returns:
             The player board as a 2D 7x6 numpy array
         """
-        pass
+        return self.get_player_boards_view()[
+               player_n * self.PLAYER_BOARD_RANGE: player_n * self.PLAYER_BOARD_RANGE
+                                                   + self.PLAYER_BOARD_RANGE
+               ]
 
     def get_player_reserves_view(self) -> np.ndarray:
         """Get the distribution of tiles across all player reserves"""
-        pass
+        return self.tiles[self.player_reserve_index: self.player_reserve_index + self.n_players]
 
     def get_nth_player_reserve_view(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles in reserve that are held by player n."""
-        pass
+        return self.get_player_reserves_view()[player_n]
 
     def is_supply_full(self) -> bool:
         """Check if the supply is filled to 10 tiles.
@@ -271,7 +275,7 @@ class Tiles:
         for display_index in range(self.FACTORY_DISPLAY_INDEX, self.player_board_index):
             self.draw_from_bag(self.FACTORY_DISPLAY_TILE_MAX, display_index)
 
-    def draw_tile_from_factory_display(
+    def draw_from_factory_display(
             self, player: int, factory_display: int, tiles: np.ndarray
     ) -> None:
         """Move tiles from the factory display to the player reserves.
@@ -290,8 +294,56 @@ class Tiles:
             tiles=tiles,
         )
 
-    def discard_from_factory_display_to_center(self, factory_display) -> None:
+    def discard_from_factory_display_to_center(self, factory_display: int) -> None:
         """Discard remaining tiles from the factory display to the center."""
+        self.move_tiles(
+            source_index=factory_display,
+            destination_index=self.TABLE_CENTER_INDEX,
+            tiles=self.get_nth_factory_display_view(factory_display),
+        )
+
+    def discard_from_reserve_to_tower(self, player: int, tiles: np.ndarray) -> None:
+        """Discard tiles to the tower from the player reserve.
+
+        Args:
+            player: Integer index of the player whose tiles are to be moved
+            tiles: np.ndarray of tiles
+
+        Returns:
+            None
+        """
+        self.move_tiles(
+            source_index=self.player_reserve_index + player,
+            destination_index=self.TOWER_INDEX,
+            tiles=tiles,
+        )
+
+    def play_tile_to_board(
+            self, player: int, cost: int, color: Union[int, TileColor]
+    ) -> None:
+        """Play a tile from the player reserve to the board.
+
+        Args:
+            player: Integer index of the player whose tiles are to be moved.
+            cost: The integer total cost of tiles spent to place the tile.
+            color: TileColor value or integer value associated with the
+                    tile color.
+
+        Returns:
+            None
+        """
+        # Create a tile array and increment the color to be placed on the board
+        tiles = np.array([0] * len(TileColor), "B")
+        tiles[color] += 1
+
+        self.move_tiles(
+            source_index=self.player_reserve_index + player,
+            destination_index=self.player_board_index
+                              + player * self.PLAYER_BOARD_RANGE
+                              + cost
+                              - 1,  # offset 1 due to 1-indexing costs
+            tiles=tiles
+        )
 
     """ VALIDATION """
 

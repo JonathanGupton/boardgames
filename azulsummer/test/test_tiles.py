@@ -133,6 +133,8 @@ def test_is_supply_full_is_true_at_first_fill(n_players):
 def test_fill_factory_displays(
         n_players, factory_idx_min, factory_idx_max, total_tiles, remaining_bag_tiles
 ):
+    """Test that filling the factory displays loads each display with four
+    tiles."""
     t = Tiles(n_players)
     t.fill_factory_displays()
     assert t.tiles[factory_idx_min:factory_idx_max].sum() == total_tiles
@@ -145,6 +147,8 @@ def test_fill_factory_displays(
     [(2, 4), (3, 4), (4, 4)],
 )
 def test_get_nth_factory_display_view(n_players, factory_idx_min):
+    """Test that the get_nth_factory_display_view shows the correct factory
+    displays."""
     t = Tiles(n_players)
     t.fill_factory_displays()
 
@@ -153,3 +157,29 @@ def test_get_nth_factory_display_view(n_players, factory_idx_min):
         assert np.array_equal(
             t.get_nth_factory_display_view(idx), t.tiles[factory_idx_min + idx]
         )
+
+
+@pytest.mark.parametrize(
+    "n_players,rows,cols",
+    [(2, 14, 6), (3, 21, 6), (4, 28, 6)],
+)
+def test_get_player_board_views(n_players, rows, cols):
+    """Test get_player_board_views returns the correct number of rows."""
+    t = Tiles(n_players)
+    assert t.get_player_boards_view().shape == (rows, cols)
+
+
+def test_play_tile_to_board():
+    pass
+
+
+def test_play_tile_to_center_star():
+    pass
+
+
+def test_get_player_reserves_view():
+    pass
+
+
+def test_get_nth_player_reserve_view():
+    pass
