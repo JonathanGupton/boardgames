@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import numpy as np
 
-from azulsummer.models.enums import TileColor, PLAYER_TO_DISPLAY_RATIO
+from azulsummer.models.enums import TileColor, StarColor, PLAYER_TO_DISPLAY_RATIO
 
 # Referenced in the Tiles.validate_tiles() method
 # This is created here to avoid instantiating a new object every time the Tile
@@ -169,7 +169,9 @@ class Tiles:
 
     def get_player_reserves_view(self) -> np.ndarray:
         """Get the distribution of tiles across all player reserves"""
-        return self.tiles[self.player_reserve_index: self.player_reserve_index + self.n_players]
+        return self.tiles[
+               self.player_reserve_index: self.player_reserve_index + self.n_players
+               ]
 
     def get_nth_player_reserve_view(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles in reserve that are held by player n."""
@@ -223,7 +225,19 @@ class Tiles:
         Returns:
             None
         """
-        # TODO:  Work out logic for bag and tower + bag being empty
+
+        # Send over tiles and try to refill from tower
+        if self.get_bag_quantity() < n_tiles:
+            moved_tiles = self.get_bag_quantity()
+            self.move_tiles(
+                source_index=self.BAG_INDEX,
+                destination_index=destination,
+                tiles=self.tiles[self.BAG_INDEX],
+            )
+            n_tiles -= moved_tiles
+            self.refill_bag_from_tower()
+
+        n_tiles = min(n_tiles, self.get_bag_quantity())
 
         # multivariate_hypergeometric draws tiles without replacement from a
         # 1-D array of tiles e.g. [22, 22, 22, 22, 22, 22] results
@@ -319,7 +333,7 @@ class Tiles:
         )
 
     def play_tile_to_board(
-            self, player: int, cost: int, color: Union[int, TileColor]
+            self, player: int, cost: int, color: Union[int, StarColor]
     ) -> None:
         """Play a tile from the player reserve to the board.
 
@@ -342,7 +356,7 @@ class Tiles:
                               + player * self.PLAYER_BOARD_RANGE
                               + cost
                               - 1,  # offset 1 due to 1-indexing costs
-            tiles=tiles
+            tiles=tiles,
         )
 
     """ VALIDATION """
