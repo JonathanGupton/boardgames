@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from enum import Enum, IntEnum, unique, auto
 
+# Number of players : Number of factory displays ratio
+PLAYER_TO_DISPLAY_RATIO: dict[int, int] = {2: 5, 3: 7, 4: 9}
+
 
 @unique
 class TileColor(IntEnum):
@@ -13,6 +16,19 @@ class TileColor(IntEnum):
     Yellow = 3
     Green = 4
     Purple = 5
+
+
+@unique
+class StarColor(IntEnum):
+    """Star indices"""
+
+    Orange = 0
+    Red = 1
+    Blue = 2
+    Yellow = 3
+    Green = 4
+    Purple = 5
+    Wild = 6
 
 
 @unique
@@ -66,3 +82,4 @@ class StateActions(Enum):
     LoadTilesToSupply = auto()
     LoadTilesToTower = auto()
     UnassignStartPlayer = auto()
+
