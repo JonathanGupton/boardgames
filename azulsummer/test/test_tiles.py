@@ -177,9 +177,28 @@ def test_play_tile_to_center_star():
     pass
 
 
-def test_get_player_reserves_view():
-    pass
+@pytest.mark.parametrize(
+    "n_players,positions", [(2, (23, 25)), (3, (32, 35)), (4, (41, 45))]
+)
+def test_get_player_reserves_view(n_players, positions):
+    for position_index in range(*positions):
+        t = Tiles(n_players)
+        t.move_tiles(t.BAG_INDEX, position_index, t.tiles[t.BAG_INDEX])
+        assert np.array_equal(
+            t.get_player_reserves_view(), t.tiles[positions[0]: positions[1]]
+        )
 
 
-def test_get_nth_player_reserve_view():
-    pass
+@pytest.mark.parametrize("n_players,reserve_position", [(2, 23), (3, 32), (4, 41)])
+def test_get_nth_player_reserve_view(n_players, reserve_position):
+    for player_index in range(n_players):
+        t = Tiles(n_players)
+        t.move_tiles(
+            source_index=t.BAG_INDEX,
+            destination_index=t.player_reserve_index + player_index,
+            tiles=t.tiles[t.BAG_INDEX],
+        )
+        assert np.array_equal(
+            t.get_nth_player_reserve_view(player_index),
+            t.tiles[reserve_position + player_index],
+        )
