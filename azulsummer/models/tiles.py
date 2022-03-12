@@ -270,10 +270,7 @@ class Tiles:
         supply space.
         """
         unfilled_supply = self.SUPPLY_TILE_MAX - self.get_supply_quantity()
-        n_missing_supply_tiles = min(
-            unfilled_supply, self.get_bag_quantity() + self.get_tower_quantity()
-        )
-        self.draw_from_bag(n_missing_supply_tiles, self.SUPPLY_INDEX)
+        self.draw_from_bag(unfilled_supply, self.SUPPLY_INDEX)
 
     def fill_factory_displays(self) -> None:
         """Fill each factory display with 4 tiles drawn from the bag per
@@ -355,7 +352,7 @@ class Tiles:
             destination_index=self.player_board_index
                               + player * self.PLAYER_BOARD_RANGE
                               + cost
-                              - 1,  # offset 1 due to 1-indexing costs
+                              - 1,  # offset 1 due to 1-indexed costs
             tiles=tiles,
         )
 

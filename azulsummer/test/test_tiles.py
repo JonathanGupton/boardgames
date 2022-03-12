@@ -56,8 +56,7 @@ def test_validate_invalid_column_tile_count(n_players):
 
 
 def test_tiles_equals_valid_tile_distribution():
-    """Test that the sum of all tiles is equal to the valid_tile_distribution.
-    """
+    """Test that the sum of all tiles is equal to the valid_tile_distribution."""
     t = Tiles(2)
     assert np.array_equal(t.tiles.sum(axis=0), VALID_TILE_DISTRIBUTION)
 
@@ -115,10 +114,18 @@ def test_draw_from_bag_more_than_available_from_bag_but_enough_in_tower(n_player
     number of tiles in the bag.
     """
     t = Tiles(n_players)
+
+    # set bag to 0 tiles
     t.tiles[t.BAG_INDEX] *= 0
+
+    # set tower to 4 tiles
     t.tiles[t.TOWER_INDEX] += np.array([2, 2, 0, 0, 0, 0], "B")
+
+    # Move the rest of the tiles to table center and validate
     t.tiles[t.TABLE_CENTER_INDEX] += np.array([20, 20, 22, 22, 22, 22], "B")
     t.validate_tile()
+
+    # Draw 4 tiles from the bag and confirm 4 tiles moved
     t.draw_from_bag(4, t.SUPPLY_INDEX)
     assert np.array_equal(t.get_supply_view(), np.array([2, 2, 0, 0, 0, 0], "B"))
 
@@ -129,10 +136,18 @@ def test_draw_from_bag_more_than_available_in_bag_and_tower(n_players):
     over the remaining tiles in the bag.
     """
     t = Tiles(n_players)
+
+    # Set bag to 0 tiles
     t.tiles[t.BAG_INDEX] *= 0
+
+    # Put 3 tiles in the tower
     t.tiles[t.TOWER_INDEX] += np.array([1, 2, 0, 0, 0, 0], "B")
+
+    # Move the rest to the table center and validate
     t.tiles[t.TABLE_CENTER_INDEX] += np.array([21, 20, 22, 22, 22, 22], "B")
     t.validate_tile()
+
+    # Draw 6 tiles to supply_index and confirm only 3 tiles moved
     t.draw_from_bag(6, t.SUPPLY_INDEX)
     assert np.array_equal(t.get_supply_view(), np.array([1, 2, 0, 0, 0, 0], "B"))
 
