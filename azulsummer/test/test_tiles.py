@@ -176,7 +176,7 @@ def test_is_supply_full_is_true_at_first_fill(n_players):
     [(2, 4, 9, 20, 112), (3, 4, 11, 28, 104), (4, 4, 13, 36, 96)],
 )
 def test_fill_factory_displays(
-        n_players, factory_idx_min, factory_idx_max, total_tiles, remaining_bag_tiles
+    n_players, factory_idx_min, factory_idx_max, total_tiles, remaining_bag_tiles
 ):
     """Test that filling the factory displays loads each display with four
     tiles.
@@ -233,7 +233,7 @@ def test_get_player_reserves_view(n_players, positions):
         t = Tiles(n_players)
         t.move_tiles(t.BAG_INDEX, position_index, t.tiles[t.BAG_INDEX])
         assert np.array_equal(
-            t.get_player_reserves_view(), t.tiles[positions[0]: positions[1]]
+            t.get_player_reserves_view(), t.tiles[positions[0] : positions[1]]
         )
 
 
@@ -253,3 +253,41 @@ def test_get_nth_player_reserve_view(n_players, reserve_position):
             t.get_nth_player_reserve_view(player_index),
             t.tiles[reserve_position + player_index],
         )
+
+
+@pytest.mark.parametrize(
+    "n_players,seed", [(2, 0), (2, 1), (3, 0), (3, 1), (4, 0), (4, 1)]
+)
+def test_tile_repr(n_players, seed):
+    t = Tiles(n_players, seed=seed)
+    assert repr(t)
+
+
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_get_table_center_view(n_players):
+    t = Tiles(n_players=n_players)
+    t.move_tiles(t.BAG_INDEX, t.TABLE_CENTER_INDEX, t.tiles[t.BAG_INDEX])
+    assert np.array_equal(t.get_table_center_view(), t.tiles[t.TABLE_CENTER_INDEX])
+
+
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_get_table_center_quantity(n_players):
+    t = Tiles(n_players=n_players)
+    t.move_tiles(t.BAG_INDEX, t.TABLE_CENTER_INDEX, t.tiles[t.BAG_INDEX])
+    assert t.get_table_center_quantity() == 132
+
+
+def test_get_nth_player_board_view():
+    pass
+
+
+def test_draw_from_factory_display():
+    pass
+
+
+def test_discard_from_factory_display_to_center():
+    pass
+
+
+def test_discard_from_reserve_to_tower():
+    pass
