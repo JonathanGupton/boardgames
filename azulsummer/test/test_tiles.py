@@ -313,10 +313,24 @@ def test_draw_from_factory_display(n_players):
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_discard_from_factory_display_to_center(n_players):
-    t = Tiles(n_players)
-    t.fill_supply()
+    """Test discarding from factory display to center for each factory display.
+    """
+    for factory_display in range(PLAYER_TO_DISPLAY_RATIO[n_players]):
+        # Create a tile object and fill supply and factory displays
+        t = Tiles(n_players)
+        t.fill_supply()
+        t.fill_factory_displays()
 
-    # get the values for nth_display
+        # Copy the value at the nth factory display to to_discard then discard
+        # the tiles at the nth factory display to the center
+        to_discard = t.get_nth_factory_display_view(factory_display).copy()
+        t.discard_from_factory_display_to_center(factory_display)
+
+        # Verify that the new center_view is equal to the copied values and
+        # the value at the nth factory display is 0.
+        assert np.array_equal(t.get_table_center_view(), to_discard)
+        assert t.get_nth_factory_display_view(factory_display).sum() == 0
+
 
 
 def test_discard_from_reserve_to_tower():
