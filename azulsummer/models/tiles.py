@@ -18,14 +18,15 @@ class Tiles:
 
     The Tiles class manages the state of all tiles in the game at all times.
     This includes those tiles on the player boards, the player hands,
-    the tower, factory display, bag and supply spaces.
+    the tower, factory display, bag, table-center, and supply spaces.
 
     All interactions with the game tiles are managed through the Tiles class.
 
     Each group of tiles is represented as a 6-wide row in 2D numpy
     array _tiles.
     """
-
+    # TODO:  Add properties and methods to Tiles docstring
+    # TODO:  Add __slots__ to Tiles class
     # There are 22 tiles for each of the 6 colors for a total of 132 tiles
     TILE_COUNT: int = 22
 
@@ -47,7 +48,7 @@ class Tiles:
     FACTORY_DISPLAY_TILE_MAX: int = 4
 
     def __init__(self, n_players: int, seed: Optional[int] = None) -> None:
-        """Initialize a Tile class
+        """Initialize a Tile class.
 
         Tiles begin with the 132 available tiles assigned to the bag.
 
@@ -70,17 +71,17 @@ class Tiles:
         self.n_players: int = n_players
         self.n_factory_displays: int = PLAYER_TO_DISPLAY_RATIO[n_players]
         self.player_board_index: int = (
-                Tiles.FACTORY_DISPLAY_INDEX + self.n_factory_displays
+            Tiles.FACTORY_DISPLAY_INDEX + self.n_factory_displays
         )
         self.player_reserve_index: int = self.player_board_index + (
-                n_players * Tiles.PLAYER_BOARD_RANGE
+            n_players * Tiles.PLAYER_BOARD_RANGE
         )
 
-        n_tile_rows = (
-                4  # bag, tower, table center, and supply rows
-                + self.n_factory_displays
-                + (self.n_players * Tiles.PLAYER_BOARD_RANGE)
-                + self.n_players  # player reserves
+        n_tile_rows: int = (
+            4  # bag, tower, table center, and supply rows
+            + self.n_factory_displays
+            + (self.n_players * Tiles.PLAYER_BOARD_RANGE)
+            + self.n_players  # player reserves
         )
         self.tiles: np.array = np.zeros((n_tile_rows, len(TileColor)), "B")
 
@@ -132,7 +133,7 @@ class Tiles:
         Returns:
              The tile distributions as a 2D numpy array.
         """
-        return self.tiles[self.FACTORY_DISPLAY_INDEX: self.player_board_index]
+        return self.tiles[self.FACTORY_DISPLAY_INDEX : self.player_board_index]
 
     def get_factory_displays_quantity(self) -> int:
         """Get the total number of tiles across all factory displays."""
@@ -151,7 +152,7 @@ class Tiles:
 
     def get_player_boards_view(self) -> np.ndarray:
         """Get the distribution of tiles across all players' boards."""
-        return self.tiles[self.player_board_index: self.player_reserve_index]
+        return self.tiles[self.player_board_index : self.player_reserve_index]
 
     def get_nth_player_board_view(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given player board.
@@ -163,15 +164,15 @@ class Tiles:
             The player board as a 2D 7x6 numpy array
         """
         return self.get_player_boards_view()[
-               player_n * self.PLAYER_BOARD_RANGE: player_n * self.PLAYER_BOARD_RANGE
-                                                   + self.PLAYER_BOARD_RANGE
-               ]
+            player_n * self.PLAYER_BOARD_RANGE : player_n * self.PLAYER_BOARD_RANGE
+            + self.PLAYER_BOARD_RANGE
+        ]
 
     def get_player_reserves_view(self) -> np.ndarray:
         """Get the distribution of tiles across all player reserves"""
         return self.tiles[
-               self.player_reserve_index: self.player_reserve_index + self.n_players
-               ]
+            self.player_reserve_index : self.player_reserve_index + self.n_players
+        ]
 
     def get_nth_player_reserve_view(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles in reserve that are held by player n."""
@@ -188,10 +189,10 @@ class Tiles:
     ############  MOVE TILES  ############
 
     def move_tiles(
-            self,
-            source_index: int,
-            destination_index: int,
-            tiles: np.ndarray,
+        self,
+        source_index: int,
+        destination_index: int,
+        tiles: np.ndarray,
     ) -> None:
         """
         Move tiles between two tile locations.
@@ -287,7 +288,7 @@ class Tiles:
             self.draw_from_bag(self.FACTORY_DISPLAY_TILE_MAX, display_index)
 
     def draw_from_factory_display(
-            self, player: int, factory_display: int, tiles: np.ndarray
+        self, player: int, factory_display: int, tiles: np.ndarray
     ) -> None:
         """Move tiles from the factory display to the player reserves.
 
@@ -300,7 +301,7 @@ class Tiles:
             None
         """
         self.move_tiles(
-            source_index=factory_display,
+            source_index=self.FACTORY_DISPLAY_INDEX + factory_display,
             destination_index=self.player_reserve_index + player,
             tiles=tiles,
         )
@@ -308,7 +309,7 @@ class Tiles:
     def discard_from_factory_display_to_center(self, factory_display: int) -> None:
         """Discard remaining tiles from the factory display to the center."""
         self.move_tiles(
-            source_index=factory_display,
+            source_index=self.FACTORY_DISPLAY_INDEX + factory_display,
             destination_index=self.TABLE_CENTER_INDEX,
             tiles=self.get_nth_factory_display_view(factory_display),
         )
@@ -330,7 +331,7 @@ class Tiles:
         )
 
     def play_tile_to_board(
-            self, player: int, cost: int, color: Union[int, StarColor]
+        self, player: int, cost: int, color: Union[int, StarColor]
     ) -> None:
         """Play a tile from the player reserve to the board.
 
@@ -350,9 +351,9 @@ class Tiles:
         self.move_tiles(
             source_index=self.player_reserve_index + player,
             destination_index=self.player_board_index
-                              + player * self.PLAYER_BOARD_RANGE
-                              + cost
-                              - 1,  # offset 1 due to 1-indexed costs
+            + player * self.PLAYER_BOARD_RANGE
+            + cost
+            - 1,  # offset 1 due to 1-indexed costs
             tiles=tiles,
         )
 

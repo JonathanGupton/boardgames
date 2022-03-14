@@ -143,7 +143,8 @@ def test_draw_from_bag_more_than_available_in_bag_and_tower(n_players):
     # Put 3 tiles in the tower
     t.tiles[t.TOWER_INDEX] += np.array([1, 2, 0, 0, 0, 0], "B")
 
-    # Move the rest to the table center and validate
+    # Move the rest to the table center and validate that there are still 22
+    # tiles per color
     t.tiles[t.TABLE_CENTER_INDEX] += np.array([21, 20, 22, 22, 22, 22], "B")
     t.validate_tile()
 
@@ -281,12 +282,41 @@ def test_get_nth_player_board_view():
     pass
 
 
-def test_draw_from_factory_display():
-    pass
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_draw_from_factory_display(n_players):
+    """Test drawing all factory display tiles from a factory display to all
+    player reserves"""
+    for player in range(n_players):
+        for factory_display in range(PLAYER_TO_DISPLAY_RATIO[n_players]):
+            # Create a tile object
+            t = Tiles(n_players)
+
+            # Fill the supply and factory displays
+            t.fill_supply()
+            t.fill_factory_displays()
+
+            # Copy the values at the tested factory display by expected index
+            to_compare = t.tiles[t.FACTORY_DISPLAY_INDEX + factory_display].copy()
+
+            # Copy values at the factory display via Tiles method to create
+            # the array of tiles be drawn
+            to_draw = t.get_nth_factory_display_view(factory_display).copy()
+
+            # Move the tiles from the factory display to the player
+            t.draw_from_factory_display(player, factory_display, to_draw)
+
+            # Check the tiles moved match the to_compare array and check that
+            # the factory display now has 0 tiles in it
+            assert np.array_equal(to_compare, t.get_nth_player_reserve_view(player))
+            assert t.get_nth_factory_display_view(factory_display).sum() == 0
 
 
-def test_discard_from_factory_display_to_center():
-    pass
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_discard_from_factory_display_to_center(n_players):
+    t = Tiles(n_players)
+    t.fill_supply()
+
+    # get the values for nth_display
 
 
 def test_discard_from_reserve_to_tower():
