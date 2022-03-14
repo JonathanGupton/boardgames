@@ -103,8 +103,13 @@ def test_refill_bag_from_tower(n_players):
     assert np.array_equal(t.get_tower_view(), np.array([0, 0, 0, 0, 0, 0]))
 
 
-def test_draw_from_bag():
-    pass
+@pytest.mark.parametrize("n_players", [2, 3, 4],)
+def test_draw_from_bag(n_players):
+    for i in range(1, 133):
+        t = Tiles(n_players)
+        t.draw_from_bag(i, t.SUPPLY_INDEX)
+        assert np.array_equal(VALID_TILE_DISTRIBUTION-t.tiles[t.SUPPLY_INDEX],
+                              t.get_bag_view())
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
@@ -344,7 +349,10 @@ def test_discard_from_reserve_to_tower(n_players):
         # move the to_copy array from the bag to the player reserve
         t.move_tiles(t.BAG_INDEX, t.player_reserve_index + player, to_copy)
 
+        # discard all tiles in the player reserve to the tower
         t.discard_from_reserve_to_tower(player, to_copy)
 
+        # Verify the player reserve has 0 tiles and the tower has tiles
+        # equal to the to_copy array
         assert t.get_nth_player_reserve_view(player).sum() == 0
         assert np.array_equal(t.get_tower_view(), to_copy)
