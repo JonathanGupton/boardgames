@@ -260,6 +260,7 @@ def test_get_nth_player_reserve_view(n_players, reserve_position):
     "n_players,seed", [(2, 0), (2, 1), (3, 0), (3, 1), (4, 0), (4, 1)]
 )
 def test_tile_repr(n_players, seed):
+    """Test that the tile repr returns a value"""
     t = Tiles(n_players, seed=seed)
     assert repr(t)
 
@@ -332,6 +333,18 @@ def test_discard_from_factory_display_to_center(n_players):
         assert t.get_nth_factory_display_view(factory_display).sum() == 0
 
 
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_discard_from_reserve_to_tower(n_players):
+    # Reference array to be moved and compared against
+    to_copy = np.array([1, 2, 3, 4, 5, 6], "B")
 
-def test_discard_from_reserve_to_tower():
-    pass
+    for player in range(n_players):
+        t = Tiles(n_players)
+
+        # move the to_copy array from the bag to the player reserve
+        t.move_tiles(t.BAG_INDEX, t.player_reserve_index + player, to_copy)
+
+        t.discard_from_reserve_to_tower(player, to_copy)
+
+        assert t.get_nth_player_reserve_view(player).sum() == 0
+        assert np.array_equal(t.get_tower_view(), to_copy)
