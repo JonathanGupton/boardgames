@@ -1,8 +1,10 @@
+"""Module containing the named values for Azul Summer Pavilion."""
+
 from __future__ import annotations
 
 from enum import Enum, IntEnum, unique, auto
 
-# Number of players : Number of factory displays ratio
+# Ratio of Number of players : Number of factory displays
 PLAYER_TO_DISPLAY_RATIO: dict[int, int] = {2: 5, 3: 7, 4: 9}
 
 
@@ -62,6 +64,7 @@ class PlayerActions(Enum):
     DrawFromMiddle = auto()
     PlaceTile = auto()
     DiscardExcessTiles = auto()
+    Pass = auto()
 
 
 @unique
@@ -82,4 +85,3 @@ class StateActions(Enum):
     LoadTilesToSupply = auto()
     LoadTilesToTower = auto()
     UnassignStartPlayer = auto()
-
