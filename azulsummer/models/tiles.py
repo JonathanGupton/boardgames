@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import numpy as np
 
-from azulsummer.models.enums import TileColor, StarColor, PLAYER_TO_DISPLAY_RATIO
+from azulsummer.models.enums import TileColor, PLAYER_TO_DISPLAY_RATIO, StarColor
 
 # Referenced in the Tiles.validate_tiles() method
 # This is created here to avoid instantiating a new object every time the Tile
@@ -25,6 +25,7 @@ class Tiles:
     Each group of tiles is represented as a 6-wide row in 2D numpy
     array _tiles.
     """
+
     # TODO:  Add properties and methods to Tiles docstring
     # TODO:  Add __slots__ to Tiles class
     # There are 22 tiles for each of the 6 colors for a total of 132 tiles
@@ -307,7 +308,16 @@ class Tiles:
         )
 
     def discard_from_factory_display_to_center(self, factory_display: int) -> None:
-        """Discard remaining tiles from the factory display to the center."""
+        """Discard remaining tiles from the given factory display to the
+        center.
+
+        Args:
+            factory_display:  The integer index of the factory_display to be
+              emptied.
+
+        Returns:
+            None
+        """
         self.move_tiles(
             source_index=self.FACTORY_DISPLAY_INDEX + factory_display,
             destination_index=self.TABLE_CENTER_INDEX,
@@ -330,10 +340,11 @@ class Tiles:
             tiles=tiles,
         )
 
-    def play_tile_to_board(
-        self, player: int, cost: int, color: Union[int, StarColor]
+    def _play_tile_to_color_star(
+        self, player: int, cost: int, color: Union[int, TileColor]
     ) -> None:
-        """Play a tile from the player reserve to the board.
+        """Helper function to play a tile from the player reserve to a colored
+        star.
 
         Args:
             player: Integer index of the player whose tiles are to be moved.
@@ -344,18 +355,57 @@ class Tiles:
         Returns:
             None
         """
-        # Create a tile array and increment the color to be placed on the board
-        tiles = np.array([0] * len(TileColor), "B")
-        tiles[color] += 1
+        self.get_nth_player_board_view(player)[cost - 1][color] += 1
+        self.get_nth_player_reserve_view(player)[color] -= 1
+        self.validate_tile()
 
-        self.move_tiles(
-            source_index=self.player_reserve_index + player,
-            destination_index=self.player_board_index
-            + player * self.PLAYER_BOARD_RANGE
-            + cost
-            - 1,  # offset 1 due to 1-indexed costs
-            tiles=tiles,
-        )
+    def _play_tile_to_wild_star(
+        self,
+        player: int,
+        color: Union[int, TileColor],
+    ) -> None:
+        """Helper function to play a tile from the player reserve to the wild star.
+
+        Playing to the wild star is seperated from other stars because the wild
+        star cost distribution is handled by the state.  Only the color is
+        tracked in the Wild Star.
+
+        Args:
+             player: Integer index of the player whose tiles are to be moved.
+             color:  TileColor value or integer value associated with the tile
+                color.
+
+        Returns:
+            None
+        """
+        self.get_nth_player_board_view(player)[StarColor.Wild][color] += 1
+        self.get_nth_player_reserve_view(player)[color] -= 1
+        self.validate_tile()
+
+    def play_tile_to_board(
+        self,
+        player: int,
+        cost: int,
+        color: Union[int, TileColor],
+        star: Union[int, StarColor],
+    ) -> None:
+        """Play a tile from the player reserve to the board.
+
+        Args:
+            player: Integer index of the player whose tiles are to be moved.
+            cost: The integer total cost of tiles spent to place the tile.
+            color: TileColor value or integer value associated with the
+                    tile color.
+            star: The star on which to place the tile.  This is only important
+                for the 'Wild' tile that can accept one of each color.
+
+        Returns:
+            None
+        """
+        if star == StarColor.Wild:
+            self._play_tile_to_wild_star(player, color)
+        else:
+            self._play_tile_to_color_star(player, cost, color)
 
     """ VALIDATION """
 

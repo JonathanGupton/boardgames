@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from azulsummer.models.enums import PLAYER_TO_DISPLAY_RATIO
+from azulsummer.models.enums import PLAYER_TO_DISPLAY_RATIO, StarColor, TileColor
 from azulsummer.models.tiles import VALID_TILE_DISTRIBUTION, Tiles
 
 
@@ -29,7 +29,7 @@ def test_n_players_out_of_range_error(n_players):
     Tile class
     """
     with pytest.raises(ValueError):
-        t = Tiles(n_players)
+        Tiles(n_players)
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
@@ -103,13 +103,17 @@ def test_refill_bag_from_tower(n_players):
     assert np.array_equal(t.get_tower_view(), np.array([0, 0, 0, 0, 0, 0]))
 
 
-@pytest.mark.parametrize("n_players", [2, 3, 4],)
+@pytest.mark.parametrize(
+    "n_players",
+    [2, 3, 4],
+)
 def test_draw_from_bag(n_players):
     for i in range(1, 133):
         t = Tiles(n_players)
         t.draw_from_bag(i, t.SUPPLY_INDEX)
-        assert np.array_equal(VALID_TILE_DISTRIBUTION-t.tiles[t.SUPPLY_INDEX],
-                              t.get_bag_view())
+        assert np.array_equal(
+            VALID_TILE_DISTRIBUTION - t.tiles[t.SUPPLY_INDEX], t.get_bag_view()
+        )
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
@@ -222,12 +226,30 @@ def test_get_player_board_views(n_players, rows, cols):
     assert t.get_player_boards_view().shape == (rows, cols)
 
 
-def test_play_tile_to_board():
-    pass
-
-
-def test_play_tile_to_center_star():
-    pass
+@pytest.mark.parametrize("n_players", [2, 3, 4])
+def test_play_tile_to_board_standard_stars(n_players):
+    """
+    Load each player with full stack
+    for each color and player load
+    """
+    for player in range(n_players):
+        for cost in range(1, 7):
+            for color in TileColor:
+                for star in StarColor:
+                    t = Tiles(n_players)
+                    t.move_tiles(
+                        t.BAG_INDEX,
+                        t.player_reserve_index + player,
+                        t.tiles[t.BAG_INDEX],
+                    )
+                    t.play_tile_to_board(player, cost, color, star)
+                    if star == StarColor.Wild:
+                        assert (
+                            t.get_nth_player_board_view(player)[StarColor.Wild][color]
+                            == 1
+                        )
+                    else:
+                        assert t.get_nth_player_board_view(player)[cost - 1][color] == 1
 
 
 @pytest.mark.parametrize(
@@ -319,8 +341,7 @@ def test_draw_from_factory_display(n_players):
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_discard_from_factory_display_to_center(n_players):
-    """Test discarding from factory display to center for each factory display.
-    """
+    """Test discarding from factory display to center for each factory display."""
     for factory_display in range(PLAYER_TO_DISPLAY_RATIO[n_players]):
         # Create a tile object and fill supply and factory displays
         t = Tiles(n_players)
