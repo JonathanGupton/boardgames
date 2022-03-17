@@ -1,6 +1,11 @@
+"""Module containing the named values for Azul Summer Pavilion."""
+
 from __future__ import annotations
 
 from enum import Enum, IntEnum, unique, auto
+
+# Ratio of Number of players : Number of factory displays
+PLAYER_TO_DISPLAY_RATIO: dict[int, int] = {2: 5, 3: 7, 4: 9}
 
 
 @unique
@@ -13,6 +18,19 @@ class TileColor(IntEnum):
     Yellow = 3
     Green = 4
     Purple = 5
+
+
+@unique
+class StarColor(IntEnum):
+    """Star indices"""
+
+    Orange = 0
+    Red = 1
+    Blue = 2
+    Yellow = 3
+    Green = 4
+    Purple = 5
+    Wild = 6
 
 
 @unique
@@ -31,21 +49,22 @@ class WildTiles(IntEnum):
 class Phase(IntEnum):
     """Enum representing each phase in a round"""
 
-    AcquireTile = auto()
-    PlayTiles = auto()
-    PrepareNextRound = auto()
+    AcquireTile = 0
+    PlayTiles = 1
+    PrepareNextRound = 2
 
 
 @unique
 class PlayerActions(Enum):
     """Enum representing each possible player action"""
 
-    AcquireTile = auto()
+    AcquireTiles = auto()
     DrawFromFactoryDisplay = auto()
     DrawFromSupply = auto()
     DrawFromMiddle = auto()
     PlaceTile = auto()
     DiscardExcessTiles = auto()
+    Pass = auto()
 
 
 @unique
@@ -54,6 +73,7 @@ class StateActions(Enum):
 
     AdvancePhase = auto()
     AdvanceCurrentPlayerIndex = auto()
+    AdvanceRound = auto()
     AdvanceTurn = auto()
     AdvanceWildTileIndex = auto()
     AssignStartPlayer = auto()
@@ -61,8 +81,8 @@ class StateActions(Enum):
     EndOfGameScoring = auto()
     IncrementScore = auto()
     LoadBagFromTower = auto()
+    LoadTilesToCenter = auto()
     LoadTilesToFactoryDisplay = auto()
-    LoadTilesToMiddle = auto()
     LoadTilesToSupply = auto()
     LoadTilesToTower = auto()
     UnassignStartPlayer = auto()

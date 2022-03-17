@@ -1,12 +1,27 @@
 from __future__ import annotations
 
-from azulsummer.models.board import PlayerBoard
-from azulsummer.models.tilecollections import PlayerReserve
+import random
+from abc import ABC, abstractmethod
 
 
-class Player:
+class Player(ABC):
     def __init__(self):
-        self.board = PlayerBoard()
-        self.tiles = PlayerReserve()
-        self.is_first: bool = False
-        self.score = 0
+        pass
+
+    @abstractmethod
+    def assess(self, state):
+        pass
+
+
+class RandomPlayer(Player):
+    """Player class that randomly chooses an available action."""
+
+    def assess(self, state):
+        return random.choice(state.available_actions)
+
+
+class ActionOnePlayer(Player):
+    """Player class that always plays the first available action."""
+
+    def assess(self, state):
+        return state.available_actions[0]
