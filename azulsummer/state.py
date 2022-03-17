@@ -12,10 +12,10 @@ from azulsummer.models.tiles import Tiles
 
 
 class State:
-    """The State class manages the state for an Azul Summer Pavilion game.
-
-    Actions that affect the game state are applied via the various State methods.
+    """The State class manages the state for an Azul Summer Pavilion game.  All
+    actions that affect the game state are applied via the State class's methods.
     """
+
     def __init__(self, n_players: int, seed: Optional[int] = None) -> None:
         self.n_players = n_players
         self.tiles = Tiles(n_players, seed=seed)
@@ -24,61 +24,75 @@ class State:
         # Phase, order, turn values
         self.turn: int = 0
         self.phase: Phase = Phase.AcquireTile
-        self.round: int = 0
+        self.round: int = -1
         self.current_player: int = 0
         self.start_player: int = 0
 
         # Previous and future actions
-        self.action_history = deque()
         self.available_actions = []
         self.next_action = deque()
 
         # initialize starting actions
-        self.next_action.extend([
-            (StateActions.LoadTilesToSupply, 10),
-            (StateActions.LoadTilesToFactoryDisplay,),
-            (StateActions.IncrementScore, -5),
-            (PlayerActions.AcquireTile,)
-        ])
+        self.next_action.extend(
+            [
+                StateActions.LoadTilesToSupply,
+                StateActions.LoadTilesToFactoryDisplay,
+                StateActions.AdvanceRound,
+                PlayerActions.AcquireTiles,
+            ]
+        )
 
-    def assign_start(self) -> None:
-        """Assign the current player to start and logs the action"""
-        self.start_player = self.current_player
-        self.action_history.append(StateActions.AssignStartPlayer)
+    def phase_one_end_criteria_are_met(self) -> bool:
+        """Check if the end phase 1 criteria are met.  Returns True if all
+        criteria are met, otherwise returns False.
 
-    def advance_player(self) -> None:
+        The factory display and center of table must both be empty and
+        the phase must be AcquireTile.
+        """
+        return all(
+            [
+                self.tiles.get_factory_displays_quantity() == 0,
+                self.tiles.get_table_center_quantity() == 0,
+                self.phase == Phase.AcquireTile,
+            ]
+        )
+
+    def phase_two_end_criteria_are_met(self) -> bool:
+        """Check if the end phase 2 criteria are met.  This occurs when all
+        players have passed during Phase.PlayTiles.
+        """
         pass
 
-    def update_score(self, points: int) -> None:
-        """Update the player score by points at the current player index"""
-        self.score.update(self.current_player, points)
+    def advance_round(self):
+        """Increment the round.
 
-    def apply_action(self, action, *args):
-        """Method containing game flow logic for the game"""
-        match [self.phase, action, self.round]:
+        The State has a default round of -1, which is incremented as part of
+        the game initialization process.  Each round from 0 to 5 (6 rounds
+        total) is associated with a Wild Tile color.
 
-            case [Phase.AcquireTile, _, _]:
-                pass
+        Returns:
+            None
+        """
+        self.round += 1
 
-            case [Phase.AcquireTile, PlayerActions.DrawFromFactoryDisplay, _]:
-                pass
+    def increment_current_player(self):
+        """Increment the player index by one and loop back to player 0 when
+        the last player is reached.
+        """
+        self.current_player = (self.current_player + 1) % self.n_players
 
-            case [Phase.AcquireTile, PlayerActions.DrawFromMiddle, _]:
-                n_tiles_drawn = self.draw_from_middle(*args)
+    def fill_supply(self):
+        """Fill the supply with tiles."""
+        self.tiles.fill_supply()
 
-                # First player to draw from the middle gets pushed back n_tiles
-                if self.start_player is None:
-                    self.assign_start()
-                    self.update_score(n_tiles_drawn)
+    def fill_factory_displays(self):
+        """Fill the factory displays with tiles."""
+        self.tiles.fill_factory_displays()
 
-            case [Phase.PlayTiles, PlayerActions.PlaceTile, _] if self.round < 6:
-                pass
+    def generate_actions(self):
+        """Generate all available actions given the current state."""
+        pass
 
-            case [Phase.PrepareNextRound, StateActions.LoadTilesToFactoryDisplay, round] \
-                if self.round < 6:
-                pass
 
-            case [Phase.PrepareNextRound, _, round] if self.round == 6:
-                # final score
-                # declare winner
-                pass
+def apply_actions(state, action, *args) -> None:
+    pass
