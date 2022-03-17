@@ -20,14 +20,23 @@ class Tiles:
     This includes those tiles on the player boards, the player hands,
     the tower, factory display, bag, table-center, and supply spaces.
 
-    All interactions with the game tiles are managed through the Tiles class.
+    All direct interactions with the game tiles are handled through the Tiles
+    class.
 
     Each group of tiles is represented as a 6-wide row in 2D numpy
     array _tiles.
     """
-
     # TODO:  Add properties and methods to Tiles docstring
-    # TODO:  Add __slots__ to Tiles class
+    __slots__ = [
+        "n_factory_displays",
+        "n_players",
+        "player_board_index",
+        "player_reserve_index",
+        "rng",
+        "seed",
+        "tiles",
+    ]
+
     # There are 22 tiles for each of the 6 colors for a total of 132 tiles
     TILE_COUNT: int = 22
 
