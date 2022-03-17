@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Sequence
+from collections import deque
+from typing import Sequence, Optional
 from uuid import uuid4
 
 from azulsummer.models.player import Player
@@ -8,33 +9,24 @@ from azulsummer.state import State
 
 
 class Game:
-    def __init__(self, players: Sequence[Player], initialize: bool = True):
+    """Class to interface actions between the state and the players."""
+
+    def __init__(self, players: Sequence[Player], seed: Optional[int] = None):
         """Initiate a game
 
-        Players:  A sequence of class Player.  Player at index 0 will be the
-          starting player.
-
-
-
+        Args:
+            players:  A sequence of class Player.  Player at index 0 will be
+                the starting player.
+            seed:  Optional int
         """
-        if initialize:
-            self.id = str(uuid4())
-            self.state = State(players)
+        self.id = str(uuid4())
+        self.players = players
+        self.state = State(len(players), seed=seed)
+        self.state_history = deque()
 
     def play(self):
         while self.state.next_action:
-            action, args = self.state.next_action.popleft()
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        player = self.state.players[self.state.current_player]
-        self.actions = self.state.available_actions
-
-        action = None  # decision function for player
-
-        return self.execute(action)
+            action = self.state.next_action.popleft()
 
     def execute(self, action):
         pass
