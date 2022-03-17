@@ -49,9 +49,9 @@ class WildTiles(IntEnum):
 class Phase(IntEnum):
     """Enum representing each phase in a round"""
 
-    AcquireTile = auto()
-    PlayTiles = auto()
-    PrepareNextRound = auto()
+    AcquireTile = 0
+    PlayTiles = 1
+    PrepareNextRound = 2
 
 
 @unique
@@ -73,6 +73,7 @@ class StateActions(Enum):
 
     AdvancePhase = auto()
     AdvanceCurrentPlayerIndex = auto()
+    AdvanceRound = auto()
     AdvanceTurn = auto()
     AdvanceWildTileIndex = auto()
     AssignStartPlayer = auto()
@@ -80,8 +81,8 @@ class StateActions(Enum):
     EndOfGameScoring = auto()
     IncrementScore = auto()
     LoadBagFromTower = auto()
+    LoadTilesToCenter = auto()
     LoadTilesToFactoryDisplay = auto()
-    LoadTilesToMiddle = auto()
     LoadTilesToSupply = auto()
     LoadTilesToTower = auto()
     UnassignStartPlayer = auto()
