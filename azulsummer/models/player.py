@@ -20,7 +20,7 @@ class RandomPlayer(Player):
         return random.choice(state.available_actions)
 
 
-class PlaysActionOne(Player):
+class ActionOnePlayer(Player):
     """Player class that always plays the first available action."""
 
     def assess(self, state):
