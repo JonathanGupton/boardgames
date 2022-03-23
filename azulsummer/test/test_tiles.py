@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 
 from azulsummer.models.enums import PLAYER_TO_DISPLAY_RATIO, StarColor, TileColor
-from azulsummer.models.tiles import VALID_TILE_DISTRIBUTION, Tiles
+from azulsummer.models.tiles import (
+    VALID_TILE_DISTRIBUTION,
+    Tiles,
+    tile_distribution_repr,
+)
 
 
 @pytest.mark.parametrize("n_players,n_tiles", [(2, 132), (3, 132), (4, 132)])
@@ -377,3 +381,24 @@ def test_discard_from_reserve_to_tower(n_players):
         # equal to the to_copy array
         assert t.get_nth_player_reserve_view(player).sum() == 0
         assert np.array_equal(t.get_tower_view(), to_copy)
+
+
+def test_tile_distribution_repr():
+    t = Tiles(2)
+    t.fill_factory_displays()
+    assert tile_distribution_repr(t.get_nth_factory_display_view(0))
+
+
+def test_tile_distribution_repr_verbose():
+    """Test that calling the verbose tile_distribution_repr returns:
+        - an empty string when there are zero tiles in a distribution,
+        - a full string when there are 0 tiles in the distribtuion, and
+        - a verbose and non-verbose call of an array of 0's should return
+          different values
+        """
+    t = Tiles(2)
+    assert tile_distribution_repr(t.get_tower_view(), verbose=True)
+    assert not tile_distribution_repr(t.get_tower_view(), verbose=False)
+    assert tile_distribution_repr(
+        t.get_tower_view(), verbose=False
+    ) != tile_distribution_repr(t.get_tower_view(), verbose=True)
