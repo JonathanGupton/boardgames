@@ -23,24 +23,26 @@ class State:
 
         # Phase, order, turn values
         self.turn: int = 0
-        self.phase: Phase = Phase.AcquireTile
+        self.phase: Phase = Phase.acquire_tile
         self.round: int = -1
-        self.current_player: int = 0
-        self.start_player: int = 0
+        self.current_player_index: int = 0
+        self.start_player_index: int = 0
 
-        # Previous and future actions
+        # Available and enqueued future actions
         self.available_actions = []
         self.next_action = deque()
 
         # initialize starting actions
         self.next_action.extend(
             [
-                StateActions.LoadTilesToSupply,
-                StateActions.LoadTilesToFactoryDisplay,
-                StateActions.AdvanceRound,
-                PlayerActions.AcquireTiles,
+                StateActions.load_tiles_to_supply,
+                StateActions.load_tiles_to_factory_display,
+                StateActions.advance_round,
+                PlayerActions.acquire_tiles,
             ]
         )
+
+        self.winner = None
 
     def phase_one_end_criteria_are_met(self) -> bool:
         """Check if the end phase 1 criteria are met.  Returns True if all
@@ -51,9 +53,9 @@ class State:
         """
         return all(
             [
+                self.phase == Phase.acquire_tile,
                 self.tiles.get_factory_displays_quantity() == 0,
                 self.tiles.get_table_center_quantity() == 0,
-                self.phase == Phase.AcquireTile,
             ]
         )
 
@@ -79,7 +81,7 @@ class State:
         """Increment the player index by one and loop back to player 0 when
         the last player is reached.
         """
-        self.current_player = (self.current_player + 1) % self.n_players
+        self.current_player_index = (self.current_player_index + 1) % self.n_players
 
     def fill_supply(self):
         """Fill the supply with tiles."""
@@ -93,6 +95,31 @@ class State:
         """Generate all available actions given the current state."""
         pass
 
+    def purge_available_actions(self):
+        """Purge the available actions list."""
+        self.available_actions.clear()
 
-def apply_actions(state, action, *args) -> None:
-    pass
+    def assign_winner(self) -> None:
+        """Assign the player index with the winning score to the winner property"""
+        pass
+
+    def get_current_player(self) -> int:
+        """Get the current player.
+
+        Returns:
+            The integer index of the current player.
+        """
+        return self.current_player_index
+
+def apply_action(state: State) -> State:
+    """Function containing the game flow logic for Azul Summer Pavilion.
+
+    Args:
+        state:  The state to be mutated
+        action:  The index for the action played by the player
+
+    Returns:
+         The mutated state
+    """
+
+    return state
