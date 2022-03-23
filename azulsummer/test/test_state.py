@@ -53,7 +53,7 @@ def test_increment_current_player_method(n_players, current_player):
     """
     s = State(n_players)
     for player in current_player:
-        assert s.current_player == player
+        assert s.current_player_index == player
         s.increment_current_player()
 
 
@@ -127,5 +127,10 @@ def test_play_tile_to_board_and_trigger_statue_supply_draw():
 
 
 def test_play_tile_to_board_and_trigger_window_supply_draw():
+    # TODO
+    pass
+
+
+def test_purge_available_actions():
     # TODO
     pass
