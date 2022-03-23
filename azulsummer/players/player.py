@@ -11,5 +11,8 @@ class Player(ABC):
 
     @abstractmethod
     def assess(self, state) -> int:
-        """Method containing the player decision-making logic."""
+        """Method containing the player decision-making logic.
+
+        Returns the integer index of the action to be taken.
+        """
         pass
