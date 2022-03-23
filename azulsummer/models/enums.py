@@ -57,11 +57,11 @@ class Phase(IntEnum):
 @unique
 class PlayerActions(Enum):
     """Enum representing each possible player action"""
-
+    acquire_tiles = auto()
     draw_from_factory_display = auto()
     draw_from_supply = auto()
-    draw_from_middle = auto()
-    place_tile = auto()
+    draw_from_center = auto()
+    play_tile_to_board = auto()
     discard_excess_tiles = auto()
     pass_turn = auto()
 
