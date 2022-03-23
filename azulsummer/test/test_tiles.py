@@ -402,3 +402,11 @@ def test_tile_distribution_repr_verbose():
     assert tile_distribution_repr(
         t.get_tower_view(), verbose=False
     ) != tile_distribution_repr(t.get_tower_view(), verbose=True)
+
+
+def test_draw_from_supply():
+    pass
+
+
+def test_draw_from_table_center():
+    pass
