@@ -26,6 +26,7 @@ class Tiles:
     Each group of tiles is represented as a 6-wide row in 2D numpy
     array _tiles.
     """
+
     # TODO:  Add properties and methods to Tiles docstring
     __slots__ = [
         "n_factory_displays",
@@ -349,6 +350,38 @@ class Tiles:
             tiles=tiles,
         )
 
+    def draw_from_table_center(self, player: int, tiles: np.ndarray) -> None:
+        """Transfer tiles from the middle to the player.
+
+        Args:
+            player:  Integer index of the player whose tiles are to be moved.
+            tiles:  np.ndarray of tiles
+
+        Returns:
+            None
+        """
+        self.move_tiles(
+            source_index=self.TABLE_CENTER_INDEX,
+            destination_index=self.player_reserve_index + player,
+            tiles=tiles
+        )
+
+    def draw_from_supply(self, player: int, tiles: np.ndarray) -> None:
+        """Transfer tiles from the supply to the player.
+
+        Args:
+            player: Integer index of the player whose tiles are to be moved
+            tiles:  np.ndarray of tiles
+
+        Returns:
+             None
+        """
+        self.move_tiles(
+            source_index=self.SUPPLY_INDEX,
+            destination_index=self.player_reserve_index + player,
+            tiles=tiles
+        )
+
     def _play_tile_to_color_star(
         self, player: int, cost: int, color: Union[int, TileColor]
     ) -> None:
@@ -435,3 +468,37 @@ class Tiles:
             f"{self.tiles.sum(axis=0)} is invalid. Only 22 tiles"
             f" are allowed per tile type."
         )
+
+
+def tile_distribution_repr(tiles: np.ndarray, verbose=False) -> str:
+    """View tile distribution in a human readable format.
+
+    e.g.,
+    the distribution [22, 22, 22, 22, 22, 22] is returned as
+      'Orange: 22, Red: 22, Blue: 22, Yellow: 22, Green: 22, Purple: 22'
+
+    Args:
+        tiles:  np.ndarray of length 6
+        verbose:  bool - If true, returns all tiles, otherwise only returns the
+          tile counts with positive values
+
+    Returns:
+        Str of the tile distribution as a human-readable format.
+    """
+
+    def _verbose_repr():
+        return ", ".join(
+            f"{TileColor(idx).name}: {tile_count}"
+            for idx, tile_count in enumerate(tiles)
+        )
+
+    def _non_verbose_repr():
+        return ", ".join(
+            f"{TileColor(idx).name}: {tile_count}"
+            for idx, tile_count in enumerate(tiles)
+            if tile_count
+        )
+
+    if verbose:
+        return _verbose_repr()
+    return _non_verbose_repr()
