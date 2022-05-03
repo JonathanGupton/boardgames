@@ -1,14 +1,16 @@
-def play_tile_to_board(state, player: int, star: int, tile: int):
-    pass
+from abc import ABC, abstractmethod
 
 
-def draw_factory_display_tiles(state, player, factory_display, color):
-    pass
+class Action(ABC):
+    @abstractmethod
+    def execute(self):
+        raise NotImplementedError
 
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
 
-def draw_middle_display_tile(state, player, color):
-    pass
+    def __repr__(self):
+        # TODO:  Fix the repr to include args/kwargs
+        return f"{self.__class__.__name__}()"
 
-
-def draw_tile_from_supply(state, player, color):
-    pass
