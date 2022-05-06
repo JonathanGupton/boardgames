@@ -111,6 +111,7 @@ class State:
         """
         return self.current_player_index
 
+
 def apply_action(state: State) -> State:
     """Function containing the game flow logic for Azul Summer Pavilion.
 
