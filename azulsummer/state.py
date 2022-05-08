@@ -2,11 +2,7 @@
 from collections import deque
 from typing import Optional
 
-from azulsummer.models.enums import (
-    Phase,
-    PlayerActions,
-    StateActions,
-)
+from azulsummer.models.enums import Phase
 from azulsummer.models.score import Score
 from azulsummer.models.tiles import Tiles
 
@@ -24,23 +20,13 @@ class State:
         # Phase, order, turn values
         self.turn: int = 0
         self.phase: Phase = Phase.acquire_tile
-        self.round: int = -1
-        self.current_player_index: int = 0
-        self.start_player_index: int = 0
+        self.round: Optional[int] = None
+        self.start_player_index: Optional[int] = None
+        self.current_player_index: Optional[int] = None
 
         # Available and enqueued future actions
         self.available_actions = []
         self.next_action = deque()
-
-        # initialize starting actions
-        self.next_action.extend(
-            [
-                StateActions.load_tiles_to_supply,
-                StateActions.load_tiles_to_factory_display,
-                StateActions.advance_round,
-                PlayerActions.acquire_tiles,
-            ]
-        )
 
         self.winner = None
 
@@ -111,16 +97,3 @@ class State:
         """
         return self.current_player_index
 
-
-def apply_action(state: State) -> State:
-    """Function containing the game flow logic for Azul Summer Pavilion.
-
-    Args:
-        state:  The state to be mutated
-        action:  The index for the action played by the player
-
-    Returns:
-         The mutated state
-    """
-
-    return state

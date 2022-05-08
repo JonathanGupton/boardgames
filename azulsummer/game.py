@@ -11,7 +11,7 @@ from azulsummer.state import State, apply_action
 class Game:
     """Class to interface actions between the state and the players."""
 
-    def __init__(self, players: Sequence[Player], seed: Optional[int] = None) -> None:
+    def __init__(self, players: Sequence[Player], seed: Optional[int] = None, initialize=True) -> None:
         """Initiate a game
 
         Args:
