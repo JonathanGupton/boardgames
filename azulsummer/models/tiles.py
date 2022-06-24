@@ -10,7 +10,7 @@ from azulsummer.models.enums import TileColor, PLAYER_TO_DISPLAY_RATIO, StarColo
 # Referenced in the Tiles.validate_tiles() method
 # This is created here to avoid instantiating a new object every time the Tile
 # class self validates.
-VALID_TILE_DISTRIBUTION = np.array([22, 22, 22, 22, 22, 22], "B")
+_VALID_TILE_DISTRIBUTION = np.array([22, 22, 22, 22, 22, 22], "B")
 
 
 class Tiles:
@@ -28,34 +28,34 @@ class Tiles:
     """
     # TODO:  Add properties and methods to Tiles docstring
     __slots__ = [
-        "n_factory_displays",
-        "n_players",
-        "player_board_index",
-        "player_reserve_index",
-        "rng",
-        "seed",
-        "tiles",
+        "_n_factory_displays",
+        "_n_players",
+        "_player_board_index",
+        "_player_reserve_index",
+        "_rng",
+        "_seed",
+        "_tiles",
     ]
 
     # There are 22 tiles for each of the 6 colors for a total of 132 tiles
-    TILE_COUNT: int = 22
+    _TILE_COUNT: int = 22
 
     # Indices for the tile locations that do not change based on player count
-    BAG_INDEX: int = 0
-    TOWER_INDEX: int = 1
-    TABLE_CENTER_INDEX: int = 2
-    SUPPLY_INDEX: int = 3
-    FACTORY_DISPLAY_INDEX: int = 4
+    _BAG_INDEX: int = 0
+    _TOWER_INDEX: int = 1
+    _TABLE_CENTER_INDEX: int = 2
+    _SUPPLY_INDEX: int = 3
+    _FACTORY_DISPLAY_INDEX: int = 4
 
     # 7 rows of 6 are assigned for each player's board which is
     #   1 row for each color and 1 row for the 'wild' color
-    PLAYER_BOARD_RANGE: int = 7
+    _PLAYER_BOARD_ROW_COUNT: int = 7
 
     # Max number of tiles held in the Supply row
-    SUPPLY_TILE_MAX: int = 10
+    _SUPPLY_TILE_MAX: int = 10
 
     # Number of tiles held on each factory display
-    FACTORY_DISPLAY_TILE_MAX: int = 4
+    _FACTORY_DISPLAY_TILE_MAX: int = 4
 
     def __init__(self, n_players: int, seed: Optional[int] = None) -> None:
         """Initialize a Tile class.
@@ -75,81 +75,81 @@ class Tiles:
         # Set the seed and random number generator
         if seed is None:
             seed = 0
-        self.seed = seed
-        self.rng: np.random.Generator = np.random.default_rng(seed)
+        self._seed = seed
+        self._rng: np.random.Generator = np.random.default_rng(seed)
 
-        self.n_players: int = n_players
-        self.n_factory_displays: int = PLAYER_TO_DISPLAY_RATIO[n_players]
-        self.player_board_index: int = (
-            Tiles.FACTORY_DISPLAY_INDEX + self.n_factory_displays
+        self._n_players: int = n_players
+        self._n_factory_displays: int = PLAYER_TO_DISPLAY_RATIO[n_players]
+        self._player_board_index: int = (
+                Tiles._FACTORY_DISPLAY_INDEX + self._n_factory_displays
         )
-        self.player_reserve_index: int = self.player_board_index + (
-            n_players * Tiles.PLAYER_BOARD_RANGE
+        self._player_reserve_index: int = self._player_board_index + (
+            n_players * Tiles._PLAYER_BOARD_ROW_COUNT
         )
 
         n_tile_rows: int = (
             4  # bag, tower, table center, and supply rows
-            + self.n_factory_displays
-            + (self.n_players * Tiles.PLAYER_BOARD_RANGE)
-            + self.n_players  # player reserves
+            + self._n_factory_displays
+            + (self._n_players * Tiles._PLAYER_BOARD_ROW_COUNT)
+            + self._n_players  # player reserves
         )
-        self.tiles: np.array = np.zeros((n_tile_rows, len(TileColor)), "B")
+        self._tiles: np.array = np.zeros((n_tile_rows, len(TileColor)), "B")
 
         # Create the initial distribution of 22 tiles * 6 tile colors
-        self.tiles[self.BAG_INDEX] += np.array([Tiles.TILE_COUNT] * len(TileColor), "B")
+        self._tiles[self._BAG_INDEX] += np.array([Tiles._TILE_COUNT] * len(TileColor), "B")
 
     def __repr__(self):
         return (
-            f"{self.__class__.__name__}(n_players={self.n_players}, seed={self.seed})"
+            f"{self.__class__.__name__}(n_players={self._n_players}, seed={self._seed})"
         )
 
     """ VIEWS """
 
-    def get_bag_view(self) -> np.ndarray:
+    def view_bag(self) -> np.ndarray:
         """Get the distribution of tiles in the bag."""
-        return self.tiles[self.BAG_INDEX]
+        return self._tiles[self._BAG_INDEX]
 
     def get_bag_quantity(self) -> int:
         """Get the total number of tiles in the bag"""
-        return self.get_bag_view().sum()
+        return self.view_bag().sum()
 
-    def get_tower_view(self) -> np.ndarray:
+    def view_tower(self) -> np.ndarray:
         """Get the distribution of tiles in the tower."""
-        return self.tiles[self.TOWER_INDEX]
+        return self._tiles[self._TOWER_INDEX]
 
     def get_tower_quantity(self) -> int:
         """Get the total number of tiles in the tower"""
-        return self.get_tower_view().sum()
+        return self.view_tower().sum()
 
-    def get_table_center_view(self) -> np.ndarray:
+    def view_table_center(self) -> np.ndarray:
         """Get the distribution of tiles in the center of the table."""
-        return self.tiles[self.TABLE_CENTER_INDEX]
+        return self._tiles[self._TABLE_CENTER_INDEX]
 
     def get_table_center_quantity(self) -> int:
         """Get the number of tiles currently in the table center"""
-        return self.get_table_center_view().sum()
+        return self.view_table_center().sum()
 
-    def get_supply_view(self) -> np.ndarray:
+    def view_supply(self) -> np.ndarray:
         """Get the distribution of tiles in the supply."""
-        return self.tiles[self.SUPPLY_INDEX]
+        return self._tiles[self._SUPPLY_INDEX]
 
     def get_supply_quantity(self) -> int:
         """Get the total number of tiles held in supply."""
-        return self.get_supply_view().sum()
+        return self.view_supply().sum()
 
-    def get_factory_displays_view(self) -> np.ndarray:
+    def view_factory_displays(self) -> np.ndarray:
         """Get the distribution of tiles across all factory displays.
 
         Returns:
              The tile distributions as a 2D numpy array.
         """
-        return self.tiles[self.FACTORY_DISPLAY_INDEX : self.player_board_index]
+        return self._tiles[self._FACTORY_DISPLAY_INDEX: self._player_board_index]
 
     def get_factory_displays_quantity(self) -> int:
         """Get the total number of tiles across all factory displays."""
-        return self.get_factory_displays_view().sum()
+        return self.view_factory_displays().sum()
 
-    def get_nth_factory_display_view(self, factory_display_n: int) -> np.ndarray:
+    def view_nth_factory_display(self, factory_display_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given factory display.
 
         Args:
@@ -158,13 +158,13 @@ class Tiles:
         Returns:
              The tile distribution as a numpy array.
         """
-        return self.get_factory_displays_view()[factory_display_n]
+        return self.view_factory_displays()[factory_display_n]
 
-    def get_player_boards_view(self) -> np.ndarray:
+    def view_player_boards(self) -> np.ndarray:
         """Get the distribution of tiles across all players' boards."""
-        return self.tiles[self.player_board_index : self.player_reserve_index]
+        return self._tiles[self._player_board_index: self._player_reserve_index]
 
-    def get_nth_player_board_view(self, player_n: int) -> np.ndarray:
+    def view_player_board_n(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given player board.
 
         Args:
@@ -173,32 +173,32 @@ class Tiles:
         Returns:
             The player board as a 2D 7x6 numpy array
         """
-        return self.get_player_boards_view()[
-            player_n * self.PLAYER_BOARD_RANGE : player_n * self.PLAYER_BOARD_RANGE
-            + self.PLAYER_BOARD_RANGE
+        return self.view_player_boards()[
+            player_n * self._PLAYER_BOARD_ROW_COUNT: player_n * self._PLAYER_BOARD_ROW_COUNT
+                                                     + self._PLAYER_BOARD_ROW_COUNT
         ]
 
-    def get_player_reserves_view(self) -> np.ndarray:
+    def view_player_reserves(self) -> np.ndarray:
         """Get the distribution of tiles across all player reserves"""
-        return self.tiles[
-            self.player_reserve_index : self.player_reserve_index + self.n_players
+        return self._tiles[
+               self._player_reserve_index: self._player_reserve_index + self._n_players
         ]
 
-    def get_nth_player_reserve_view(self, player_n: int) -> np.ndarray:
+    def view_player_reserve_n(self, player_n: int) -> np.ndarray:
         """Get the distribution of tiles in reserve that are held by player n."""
-        return self.get_player_reserves_view()[player_n]
+        return self.view_player_reserves()[player_n]
 
-    def is_supply_full(self) -> bool:
+    def _supply_is_full(self) -> bool:
         """Check if the supply is filled to 10 tiles.
 
         Returns:
             Bool:  True if the supply has 10 tiles, False if it has <10 tiles.
         """
-        return self.get_supply_quantity() == self.SUPPLY_TILE_MAX
+        return self.get_supply_quantity() == self._SUPPLY_TILE_MAX
 
     ############  MOVE TILES  ############
 
-    def move_tiles(
+    def _move_tiles(
         self,
         source_index: int,
         destination_index: int,
@@ -216,11 +216,11 @@ class Tiles:
         Returns:
             None
         """
-        self.tiles[destination_index] += tiles
-        self.tiles[source_index] -= tiles
-        self.validate_tile()
+        self._tiles[destination_index] += tiles
+        self._tiles[source_index] -= tiles
+        self._check_tile_integrity()
 
-    def draw_from_bag(self, n_tiles: int, destination: int) -> None:
+    def _draw_from_bag(self, n_tiles: int, destination: int) -> None:
         """Draw tiles from the bag and transfer the tiles to the destination.
 
         If n_tiles exceeds the number of tiles in the bag, tiles in the tower
@@ -240,13 +240,13 @@ class Tiles:
         # Send over tiles and try to refill from tower
         if self.get_bag_quantity() < n_tiles:
             moved_tiles = self.get_bag_quantity()
-            self.move_tiles(
-                source_index=self.BAG_INDEX,
+            self._move_tiles(
+                source_index=self._BAG_INDEX,
                 destination_index=destination,
-                tiles=self.tiles[self.BAG_INDEX],
+                tiles=self._tiles[self._BAG_INDEX],
             )
             n_tiles -= moved_tiles
-            self.refill_bag_from_tower()
+            self._refill_bag_from_tower()
 
         n_tiles = min(n_tiles, self.get_bag_quantity())
 
@@ -254,23 +254,23 @@ class Tiles:
         # 1-D array of tiles e.g. [22, 22, 22, 22, 22, 22] results
         # in a distribution of drawn tiles in a 1x6 shape such as
         # [1, 2, 1, 3, 1, 1].
-        delta = self.rng.multivariate_hypergeometric(
-            self.tiles[self.BAG_INDEX], n_tiles
+        delta = self._rng.multivariate_hypergeometric(
+            self._tiles[self._BAG_INDEX], n_tiles
         ).astype("B")
-        self.move_tiles(
-            source_index=self.BAG_INDEX, destination_index=destination, tiles=delta
+        self._move_tiles(
+            source_index=self._BAG_INDEX, destination_index=destination, tiles=delta
         )
 
-    def refill_bag_from_tower(self) -> None:
+    def _refill_bag_from_tower(self) -> None:
         """Move all tiles from the Tower to the Bag.
 
-        This method should only be called by the draw_from_bag() method when
+        This method should only be called by the _draw_from_bag() method when
         the bag runs out of tiles.
         """
-        self.move_tiles(
-            source_index=self.TOWER_INDEX,
-            destination_index=self.BAG_INDEX,
-            tiles=self.tiles[self.TOWER_INDEX],
+        self._move_tiles(
+            source_index=self._TOWER_INDEX,
+            destination_index=self._BAG_INDEX,
+            tiles=self._tiles[self._TOWER_INDEX],
         )
 
     def fill_supply(self) -> None:
@@ -280,8 +280,8 @@ class Tiles:
         It is also called at the end of a turn when tiles are drawn from the
         supply space.
         """
-        unfilled_supply = self.SUPPLY_TILE_MAX - self.get_supply_quantity()
-        self.draw_from_bag(unfilled_supply, self.SUPPLY_INDEX)
+        unfilled_supply = self._SUPPLY_TILE_MAX - self.get_supply_quantity()
+        self._draw_from_bag(unfilled_supply, self._SUPPLY_INDEX)
 
     def fill_factory_displays(self) -> None:
         """Fill each factory display with 4 tiles drawn from the bag per
@@ -291,11 +291,11 @@ class Tiles:
         round.
         """
         # TODO:  Consider trying to make this a single action
-        #  will need to retool draw_from_bag or move_tiles I suspect to
+        #  will need to retool _draw_from_bag or _move_tiles I suspect to
         #  accommodate 2D arrays.
 
-        for display_index in range(self.FACTORY_DISPLAY_INDEX, self.player_board_index):
-            self.draw_from_bag(self.FACTORY_DISPLAY_TILE_MAX, display_index)
+        for display_index in range(self._FACTORY_DISPLAY_INDEX, self._player_board_index):
+            self._draw_from_bag(self._FACTORY_DISPLAY_TILE_MAX, display_index)
 
     def draw_from_factory_display(
         self, player: int, factory_display: int, tiles: np.ndarray
@@ -310,13 +310,13 @@ class Tiles:
         Returns:
             None
         """
-        self.move_tiles(
-            source_index=self.FACTORY_DISPLAY_INDEX + factory_display,
-            destination_index=self.player_reserve_index + player,
+        self._move_tiles(
+            source_index=self._FACTORY_DISPLAY_INDEX + factory_display,
+            destination_index=self._player_reserve_index + player,
             tiles=tiles,
         )
 
-    def discard_from_factory_display_to_center(self, factory_display: int) -> None:
+    def _discard_from_factory_display_to_center(self, factory_display: int) -> None:
         """Discard remaining tiles from the given factory display to the
         center.
 
@@ -327,13 +327,13 @@ class Tiles:
         Returns:
             None
         """
-        self.move_tiles(
-            source_index=self.FACTORY_DISPLAY_INDEX + factory_display,
-            destination_index=self.TABLE_CENTER_INDEX,
-            tiles=self.get_nth_factory_display_view(factory_display),
+        self._move_tiles(
+            source_index=self._FACTORY_DISPLAY_INDEX + factory_display,
+            destination_index=self._TABLE_CENTER_INDEX,
+            tiles=self.view_nth_factory_display(factory_display),
         )
 
-    def discard_from_reserve_to_tower(self, player: int, tiles: np.ndarray) -> None:
+    def _discard_from_reserve_to_tower(self, player: int, tiles: np.ndarray) -> None:
         """Discard tiles to the tower from the player reserve.
 
         Args:
@@ -343,9 +343,9 @@ class Tiles:
         Returns:
             None
         """
-        self.move_tiles(
-            source_index=self.player_reserve_index + player,
-            destination_index=self.TOWER_INDEX,
+        self._move_tiles(
+            source_index=self._player_reserve_index + player,
+            destination_index=self._TOWER_INDEX,
             tiles=tiles,
         )
 
@@ -364,9 +364,9 @@ class Tiles:
         Returns:
             None
         """
-        self.get_nth_player_board_view(player)[cost - 1][color] += 1
-        self.get_nth_player_reserve_view(player)[color] -= 1
-        self.validate_tile()
+        self.view_player_board_n(player)[cost - 1][color] += 1
+        self.view_player_reserve_n(player)[color] -= 1
+        self._check_tile_integrity()
 
     def _play_tile_to_wild_star(
         self,
@@ -387,11 +387,11 @@ class Tiles:
         Returns:
             None
         """
-        self.get_nth_player_board_view(player)[StarColor.Wild][color] += 1
-        self.get_nth_player_reserve_view(player)[color] -= 1
-        self.validate_tile()
+        self.view_player_board_n(player)[StarColor.Wild][color] += 1
+        self.view_player_reserve_n(player)[color] -= 1
+        self._check_tile_integrity()
 
-    def play_tile_to_board(
+    def play_tile(
         self,
         player: int,
         cost: int,
@@ -418,7 +418,7 @@ class Tiles:
 
     """ VALIDATION """
 
-    def validate_tile(self) -> None:
+    def _check_tile_integrity(self) -> None:
         """Validate that the Tiles.tile object contains exactly 132 tiles and
         each column contains exactly 22 tiles.
 
@@ -429,9 +429,9 @@ class Tiles:
             ValueError if an invalid number of tiles are found in the rows or
             columns.
         """
-        if np.array_equal(self.tiles.sum(axis=0), VALID_TILE_DISTRIBUTION):
+        if np.array_equal(self._tiles.sum(axis=0), _VALID_TILE_DISTRIBUTION):
             return
         raise ValueError(
-            f"{self.tiles.sum(axis=0)} is invalid. Only 22 tiles"
+            f"{self._tiles.sum(axis=0)} is invalid. Only 22 tiles"
             f" are allowed per tile type."
         )
