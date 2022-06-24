@@ -149,7 +149,7 @@ class Tiles:
         """Get the total number of tiles across all factory displays."""
         return self.view_factory_displays().sum()
 
-    def view_nth_factory_display(self, factory_display_n: int) -> np.ndarray:
+    def view_factory_display_n(self, factory_display_n: int) -> np.ndarray:
         """Get the distribution of tiles for the given factory display.
 
         Args:
@@ -330,7 +330,7 @@ class Tiles:
         self._move_tiles(
             source_index=self._FACTORY_DISPLAY_INDEX + factory_display,
             destination_index=self._TABLE_CENTER_INDEX,
-            tiles=self.view_nth_factory_display(factory_display),
+            tiles=self.view_factory_display_n(factory_display),
         )
 
     def _discard_from_reserve_to_tower(self, player: int, tiles: np.ndarray) -> None:
