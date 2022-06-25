@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from functools import partial
 from typing import Sequence, Union, Type
 
-import numpy as np
-
+from azulsummer.models.board import Board
 from azulsummer.models.enums import StarColor
 
 
@@ -155,10 +154,10 @@ class Window(BonusSpace):
 
 
 def is_bonus_space_surrounded(
-    bonus_space: Union[Pillar, Statue, Window], board: np.ndarray
+    bonus_space: Union[Pillar, Statue, Window], board: Board
 ) -> bool:
     """Check if the bonus space is surrounded at all four adjacent locations"""
-    return all(board.flatten().take(bonus_space.adjacent))
+    return all(board.board.flatten().take(bonus_space.adjacent))
 
 
 def _make_bonus_space_collection(
