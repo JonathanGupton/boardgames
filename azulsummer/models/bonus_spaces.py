@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Union
+from functools import partial
+from typing import Sequence, Union, Type
 
 import numpy as np
 
@@ -16,6 +17,10 @@ class Position:
     def flatten(self) -> int:
         """Convert the 2D (star, tile_value) to the 1D position on the board"""
         return self.star * 6 + self.tile_value - 1
+
+    def __iter__(self):
+        yield self.star
+        yield self.tile_value
 
 
 _PILLAR_POSITIONS = (
@@ -124,20 +129,27 @@ _WINDOW_POSITIONS = (
 )
 
 
+class BonusSpace:
+    """Base class to unite windows, pillars and statues under a single superclass"""
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+
 @dataclass(frozen=True)
-class Pillar:
+class Pillar(BonusSpace):
     adjacent: tuple[int]
     draw_count: int = 1
 
 
 @dataclass(frozen=True)
-class Statue:
+class Statue(BonusSpace):
     adjacent: tuple[int]
     draw_count: int = 2
 
 
 @dataclass(frozen=True)
-class Window:
+class Window(BonusSpace):
     adjacent: tuple[int]
     draw_count: int = 3
 
@@ -147,3 +159,19 @@ def is_bonus_space_surrounded(
 ) -> bool:
     """Check if the bonus space is surrounded at all four adjacent locations"""
     return all(board.flatten().take(bonus_space.adjacent))
+
+
+def _make_bonus_space_collection(
+    bonus_space_positions: Sequence[Sequence[Position]], class_type: Type[BonusSpace]
+):
+    """Create a set of all bonus space coordinates."""
+    bonus_space = set()
+    for group in bonus_space_positions:
+        positions = tuple(p.flatten() for p in group)
+        bonus_space.add(class_type(positions))
+    return bonus_space
+
+
+make_pillars = partial(_make_bonus_space_collection, _PILLAR_POSITIONS, Pillar)
+make_windows = partial(_make_bonus_space_collection, _WINDOW_POSITIONS, Window)
+make_statues = partial(_make_bonus_space_collection, _STATUE_POSITIONS, Statue)
