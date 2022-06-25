@@ -1,180 +1,92 @@
 from __future__ import annotations
 
+from collections import deque
+
 import numpy as np
 
-N_STARS = 7  # 6 stars + 1 rainbow star
-N_PILLARS = 6
-N_STATUES = 6
-N_WINDOWS = 6
+from azulsummer.models.enums import StarColor
 
 
-class DrawPosition:
-    adjacent_tiles = {}
+class InvalidTilePlacement(Exception):
+    pass
+
+
+class Board:
+    """
+    Class representing an Azul Summer Pavilion game board
+    """
 
     def __init__(self):
-        self.draw_position = []
+        n_tile_spaces = 6
+        self.board = np.zeros(shape=(len(StarColor), n_tile_spaces), dtype="B")
 
-    def __contains__(self, item):
-        return item in self.adjacent_tiles
+    def is_valid_placement_location(self, star: StarColor, tile_value: int) -> bool:
+        """Validate that the star location is a valid placement location"""
+        return (
+            (tile_value >= 1)
+            and (tile_value <= 6)
+            and (self.board[star, tile_value - 1] == 0)
+        )
 
+    def place_tile(self, star: StarColor, tile_value: int) -> int:
+        """Place a tile on the board.  Returns the value of the placement."""
+        if self.is_valid_placement_location(star, tile_value):
+            score = self.score_tile_placement(star, tile_value)
+            self.board[star, tile_value - 1] = 1
+        else:
+            raise InvalidTilePlacement(f"Cannot place a tile on {star} {tile_value}")
+        return score
 
-class Pillars(DrawPosition):
-    adjacent_tiles = {4, 5, 10, 11, 16, 17, 22, 23, 28, 29, 34, 35}
+    def score_tile_placement(self, star: StarColor, tile_value: int) -> int:
+        """
+        Check the score associated with placing a tile on the provided star
+        and value location.
 
+        Scoring for placement is the 1 plus the count of tiles immediately
+        adjacent in the star.
 
-class Statues(DrawPosition):
-    adjacent_tiles = {
-        0,
-        1,
-        2,
-        3,
-        6,
-        7,
-        8,
-        9,
-        12,
-        13,
-        14,
-        15,
-        18,
-        19,
-        20,
-        21,
-        24,
-        25,
-        26,
-        27,
-        30,
-        31,
-        32,
-        33,
-    }
+        For example:
 
+         [0, 0, 0, 0, 0, 0]
+        - Place at any position 0 to 5 -> 1 point
 
-class Windows(DrawPosition):
-    adjacent_tiles = {
-        2,
-        3,
-        8,
-        9,
-        14,
-        15,
-        20,
-        21,
-        26,
-        27,
-        32,
-        33,
-        36,
-        37,
-        38,
-        39,
-        40,
-        41,
-    }
+        [1, 0, 0, 0, 0, 0]
+        - Place at 1 or 5 -> 2 points
+        - else 1 point
 
+        [1, 0, 1, 0, 0, 0]
+        - place at 1 -> 3 points
+        - place at 3 -> 2 points
+        - place at 4 -> 1 point
+        - place at 5 -> 2 points
 
-class PlayerBoard:
-    STATUE_POSITIONS = {
-        0,
-        1,
-        2,
-        3,
-        6,
-        7,
-        8,
-        9,
-        12,
-        13,
-        14,
-        15,
-        18,
-        19,
-        20,
-        21,
-        24,
-        25,
-        26,
-        27,
-        30,
-        31,
-        32,
-        33,
-    }
-    PILLAR_POSITIONS = {4, 5, 10, 11, 16, 17, 22, 23, 28, 29, 34, 35}
-    WINDOW_POSITIONS = {
-        2,
-        3,
-        8,
-        9,
-        14,
-        15,
-        20,
-        21,
-        26,
-        27,
-        32,
-        33,
-        36,
-        37,
-        38,
-        39,
-        40,
-        41,
-    }
+        [1, 0, 0, 1, 0, 0]
+        - place at 1 -> 2 points
+        - place at 2 -> 2 points
+        - place at 4 -> 2 points
+        - place at 5 -> 2 points
 
-    # TODO:  Make this a bit array?
-    def __init__(self) -> None:
-        self.board = np.zeros(shape=(10, 6), dtype="B")
+        [1, 0, 0, 0, 1, 0]
+        - place at 1 -> 2 points
+        - place at 2 -> 1 point
+        - place at 3 -> 2 points
+        - place at 4 -> 3 points
 
-    def __repr__(self) -> str:
-        pass
-
-    def place_tile(self, color, value):
-        self.board[color * value] = True
-
-    def play_statue_position(self, position: int):
-        if position in self.STATUE_POSITIONS:
-            pass
-
-    def check_pillar_position(self, position: int):
-        pass
-
-    def check_window_position(self, position: int):
-        pass
-
-    def is_star_complete(self, star) -> bool:
-        return all(self.board[star])
-
-    def are_tile_values_complete(self, tile_value: int) -> bool:
-        return all(self.board[0:7, tile_value])
-
-
-"""
-statue - 
-    orange 1, orange 2, red 3, red 4
-    red 1, red 2, blue 3, blue 4
-    blue 1, blue 2, yellow 3, yellow 4
-    yellow 1, yellow 2, green 3, green 4
-    green 1, green 2, purple 3, purple 4
-    purple 1, purple 2, orange 1, orange 2
-    
-window - 
-    orange 5, 6
-    red 5, 6
-    blue 5, 6
-    yellow 5, 6
-    green 5, 6
-    purple 5, 6
-    
-pillar -
-    orange 2, 3, middle 1, 6
-    red 2, 3, middle 1, 2
-    blue 2, 3, middle 2, 3
-    yellow 2, 3, middle 3, 4
-    green 2, 3, middle 4, 5
-    purple 2, 3, middle 5, 6
-
-
-Orange -> Red -> Blue -> Yellow -> Green -> Purple -> Orange
-"""
+        """
+        score = 1
+        index = tile_value - 1
+        seen = {index}
+        q = deque([index])
+        while q:
+            current = q.popleft()
+            left = current - 1 if (current - 1) >= 0 else len(self.board[star]) - 1
+            right = current + 1 if (current + 1) <= (len(self.board[star]) - 1) else 0
+            if left not in seen and self.board[star, left] == 1:
+                q.append(left)
+                seen.add(left)
+                score += 1
+            if right not in seen and self.board[star, right] == 1:
+                q.append(right)
+                seen.add(right)
+                score += 1
+        return score
