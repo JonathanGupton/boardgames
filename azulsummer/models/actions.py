@@ -1,8 +1,6 @@
 """Module containing the Action interface classes"""
 from abc import ABC, abstractmethod
 
-from azulsummer.models.player_interface import PlayerInterface
-
 
 class Action(ABC):
     """
@@ -267,30 +265,6 @@ class MakePlayerActions(Action):
 
     def execute(self):
         pass
-
-    def __str__(self):
-        pass
-
-
-class GetPlayerAction(Action):
-    def __init__(self, state, player_interface: PlayerInterface):
-        self.state = state
-        self.player_interface = player_interface
-
-    def execute(self):
-        action = self.player_interface.assess()
-
-    def __str__(self):
-        pass
-
-
-class PlayerAction(Action):
-    def __init__(self, state, action):
-        self.state = state
-        self.action = action
-
-    def execute(self):
-        self.action.execute()
 
     def __str__(self):
         pass
