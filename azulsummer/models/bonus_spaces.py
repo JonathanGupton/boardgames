@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from functools import partial
-from typing import Sequence, Union, Type
+from typing import Iterator, Sequence
 
 from azulsummer.models.board import Board
 from azulsummer.models.enums import StarColor
@@ -22,7 +21,7 @@ class Position:
         yield self.tile_value
 
 
-_PILLAR_POSITIONS = (
+_PILLAR_POSITIONS: Sequence[Sequence[Position]] = (
     (
         Position(StarColor.Orange, 2),
         Position(StarColor.Orange, 3),
@@ -61,7 +60,7 @@ _PILLAR_POSITIONS = (
     ),
 )
 
-_STATUE_POSITIONS = (
+_STATUE_POSITIONS: Sequence[Sequence[Position]] = (
     (
         Position(StarColor.Orange, 1),
         Position(StarColor.Orange, 2),
@@ -100,7 +99,7 @@ _STATUE_POSITIONS = (
     ),
 )
 
-_WINDOW_POSITIONS = (
+_WINDOW_POSITIONS: Sequence[Sequence[Position]] = (
     (
         Position(StarColor.Orange, 5),
         Position(StarColor.Orange, 6),
@@ -128,49 +127,47 @@ _WINDOW_POSITIONS = (
 )
 
 
-class BonusSpace:
-    """Base class to unite windows, pillars and statues under a single superclass"""
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-
 @dataclass(frozen=True)
-class Pillar(BonusSpace):
-    adjacent: tuple[int]
+class Pillar:
+    adjacent: tuple[int, ...]
     draw_count: int = 1
 
 
 @dataclass(frozen=True)
-class Statue(BonusSpace):
-    adjacent: tuple[int]
+class Statue:
+    adjacent: tuple[int, ...]
     draw_count: int = 2
 
 
 @dataclass(frozen=True)
-class Window(BonusSpace):
-    adjacent: tuple[int]
+class Window:
+    adjacent: tuple[int, ...]
     draw_count: int = 3
 
 
-def is_bonus_space_surrounded(
-    bonus_space: Union[Pillar, Statue, Window], board: Board
-) -> bool:
-    """Check if the bonus space is surrounded at all four adjacent locations"""
-    return all(board.board.flatten().take(bonus_space.adjacent))
+class BonusSpace:
+    """
+    Base class to unite windows, pillars and statues bonus spaces under a
+    single API
+    """
 
+    _positions = [_PILLAR_POSITIONS, _STATUE_POSITIONS, _WINDOW_POSITIONS]
+    _bonus_space_classes = [Pillar, Statue, Window]
 
-def _make_bonus_space_collection(
-    bonus_space_positions: Sequence[Sequence[Position]], class_type: Type[BonusSpace]
-):
-    """Create a set of all bonus space coordinates."""
-    bonus_space = set()
-    for group in bonus_space_positions:
-        positions = tuple(p.flatten() for p in group)
-        bonus_space.add(class_type(positions))
-    return bonus_space
+    def __init__(self):
+        self._bonus_space = set()
+        for _class_positions, _class in zip(self._positions, self._bonus_space_classes):
+            for group in _class_positions:
+                positions: tuple[int, ...] = tuple(p.flatten() for p in group)
+                self._bonus_space.add(_class(positions))
 
+    def surrounded_spaces(
+        self, board: Board
+    ) -> Iterator[Pillar | Statue | Window]:
+        for space in self._bonus_space:
+            if all(board.board.flatten().take(space.adjacent)):
+                yield space
 
-make_pillars = partial(_make_bonus_space_collection, _PILLAR_POSITIONS, Pillar)
-make_windows = partial(_make_bonus_space_collection, _WINDOW_POSITIONS, Window)
-make_statues = partial(_make_bonus_space_collection, _STATUE_POSITIONS, Statue)
+    def remove_space(self, space: Pillar| Statue | Window):
+        self._bonus_space.remove(space)
+
