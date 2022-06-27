@@ -1,270 +1,111 @@
 """Module containing the Action interface classes"""
-from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 
-class Action(ABC):
-    """
-    Command base class to interface various game actions with their
-    associated arguments and methods.
-
-    All Actions must have an execute method.  This is called by the game
-    to apply the action to the game state.
-
-    The Action base class also supplies the human-readable action
-    description for each action.
-    """
-
-    @abstractmethod
-    def execute(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    def __str__(self):
-        raise NotImplementedError
-
-    def __repr__(self):
-        # TODO:  Fix the repr to include args/kwargs
-        return f"{self.__class__.__name__}()"
+class Action:
+    pass
 
 
+@dataclass
 class AdvancePhase(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class AdvanceCurrentPlayerIndex(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class AdvanceRound(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class AdvanceTurn(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class AdvanceWildTileIndex(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class AssignStartPlayer(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class ScoreGame(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class IncrementPlayerScore(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class DecrementPlayerScore(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class LoadBagFromTower(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class LoadTilesToCenter(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class LoadTilesToFactoryDisplay(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class LoadTilesToSupply(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class LoadTilesToTower(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class UnAssignStartPlayer(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class DrawFromFactoryDisplay(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class DrawFromSupply(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class DrawFromMiddle(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class PlayTileToPlayerBoard(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class DiscardExcessTiles(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    game_id: str
 
 
+@dataclass
 class PassTurn(Action):
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
-
-
-class MakePlayerActions(Action):
-    """Creates a PlayerAction class with current player"""
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        pass
-
-    def __str__(self):
-        pass
+    pass
