@@ -5,21 +5,7 @@ from typing import Iterator, Sequence
 
 from azulsummer.models.board import Board
 from azulsummer.models.enums import StarColor
-
-
-@dataclass(frozen=True)
-class Position:
-    star: int
-    tile_value: int
-
-    def flatten(self) -> int:
-        """Convert the 2D (star, tile_value) to the 1D position on the board"""
-        return self.star * 6 + self.tile_value - 1
-
-    def __iter__(self):
-        yield self.star
-        yield self.tile_value
-
+from azulsummer.models.position import Position
 
 _PILLAR_POSITIONS: Sequence[Sequence[Position]] = (
     (
