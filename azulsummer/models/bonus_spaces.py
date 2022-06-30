@@ -141,7 +141,7 @@ class BonusSpace:
     _bonus_space_classes = [Pillar, Statue, Window]
 
     def __init__(self):
-        self._bonus_space = set()
+        self._bonus_space: set[Pillar | Statue | Window] = set()
         for _class_positions, _class in zip(self._positions, self._bonus_space_classes):
             for group in _class_positions:
                 positions: tuple[int, ...] = tuple(p.flatten() for p in group)
