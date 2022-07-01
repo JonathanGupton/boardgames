@@ -34,6 +34,12 @@ class AdvanceWildTileIndex(Action):
 @dataclass
 class AssignStartPlayer(Action):
     game_id: str
+    player: str
+
+
+@dataclass
+class CreateGame(Action):
+    players: list[str]
 
 
 @dataclass
@@ -44,11 +50,15 @@ class ScoreGame(Action):
 @dataclass
 class IncrementPlayerScore(Action):
     game_id: str
+    player: str
+    score: int
 
 
 @dataclass
 class DecrementPlayerScore(Action):
     game_id: str
+    player: str
+    score: int
 
 
 @dataclass
