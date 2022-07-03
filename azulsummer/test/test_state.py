@@ -1,6 +1,6 @@
 import pytest
 
-from azulsummer.state import State
+from azulsummer.models.state import State
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
