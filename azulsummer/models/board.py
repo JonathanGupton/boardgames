@@ -42,7 +42,7 @@ class Board:
         Check the score associated with placing a tile on the provided star
         and value location.
 
-        Scoring for placement is the 1 plus the count of tiles immediately
+        Scoring for placement is 1 plus the count of tiles immediately
         adjacent in the star.
 
         For example:
