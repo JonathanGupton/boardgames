@@ -25,3 +25,6 @@ class TileArray(tuple):
     def from_dict(cls, tiles: dict[TileColor, int]) -> "TileArray":
         """Create a TileArray from a dict of TileColor: Counts"""
         return cls([tiles.get(i, 0) for i in TileColor])
+
+    def to_dict(self) -> dict[TileColor, int]:
+        return {TileColor(i): count for i, count in enumerate(self) if count > 0}
