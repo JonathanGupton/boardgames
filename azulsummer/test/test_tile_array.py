@@ -31,3 +31,9 @@ def test_add_tile_array_to_np_array():
     ta = TileArray.from_dict(tiles=tiles)
     assert np.array_equal(ta + np.array([1, 1, 0, 0, 0, 0]), [2, 1, 0, 0, 0, 0])
     assert np.array_equal(np.array([1, 1, 0, 0, 0, 0]) + ta, [2, 1, 0, 0, 0, 0])
+
+
+@pytest.mark.parametrize("tile_dict", [{TileColor.Orange: 1, TileColor.Red: 3}, {}, {TileColor.Orange: 1}])
+def test_tile_array_to_dict(tile_dict):
+    ta = TileArray.from_dict(tile_dict)
+    assert ta.to_dict() == tile_dict
