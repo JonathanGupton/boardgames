@@ -1,8 +1,9 @@
 """Module containing the Action interface classes"""
 
 import uuid
-
 from dataclasses import dataclass
+
+from azulsummer.players.player import Player
 
 
 class Action:
@@ -15,7 +16,7 @@ class AdvancePhase(Action):
 
 
 @dataclass
-class AdvanceCurrentPlayerIndex(Action):
+class AdvanceToNextPlayer(Action):
     game_id: uuid.UUID
 
 
@@ -42,7 +43,7 @@ class AssignStartPlayer(Action):
 
 @dataclass
 class CreateGame(Action):
-    pass
+    players: list[Player]
 
 
 @dataclass
