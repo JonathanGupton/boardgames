@@ -52,3 +52,12 @@ class Phase(IntEnum):
     acquire_tile = 0
     play_tiles = 1
     prepare_next_round = 2
+
+
+class TileIndex(IntEnum):
+    """Tile indices for Tile class"""
+    Bag = 0
+    Tower = 1
+    TableCenter = 2
+    Supply = 3
+    FactoryDisplay = 4
