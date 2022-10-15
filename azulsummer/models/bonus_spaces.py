@@ -5,110 +5,110 @@ from typing import Iterator, Sequence
 
 from azulsummer.models.board import Board
 from azulsummer.models.enums import StarColor
-from azulsummer.models.position import Position
+from azulsummer.models.position import BoardPosition
 
-_PILLAR_POSITIONS: Sequence[Sequence[Position]] = (
+_PILLAR_POSITIONS: Sequence[Sequence[BoardPosition]] = (
     (
-        Position(StarColor.Orange, 2),
-        Position(StarColor.Orange, 3),
-        Position(StarColor.Wild, 6),
-        Position(StarColor.Wild, 1),
+        BoardPosition(StarColor.Orange, 2),
+        BoardPosition(StarColor.Orange, 3),
+        BoardPosition(StarColor.Wild, 6),
+        BoardPosition(StarColor.Wild, 1),
     ),
     (
-        Position(StarColor.Red, 2),
-        Position(StarColor.Red, 3),
-        Position(StarColor.Wild, 1),
-        Position(StarColor.Wild, 2),
+        BoardPosition(StarColor.Red, 2),
+        BoardPosition(StarColor.Red, 3),
+        BoardPosition(StarColor.Wild, 1),
+        BoardPosition(StarColor.Wild, 2),
     ),
     (
-        Position(StarColor.Blue, 2),
-        Position(StarColor.Blue, 3),
-        Position(StarColor.Wild, 2),
-        Position(StarColor.Wild, 3),
+        BoardPosition(StarColor.Blue, 2),
+        BoardPosition(StarColor.Blue, 3),
+        BoardPosition(StarColor.Wild, 2),
+        BoardPosition(StarColor.Wild, 3),
     ),
     (
-        Position(StarColor.Yellow, 2),
-        Position(StarColor.Yellow, 3),
-        Position(StarColor.Wild, 3),
-        Position(StarColor.Wild, 4),
+        BoardPosition(StarColor.Yellow, 2),
+        BoardPosition(StarColor.Yellow, 3),
+        BoardPosition(StarColor.Wild, 3),
+        BoardPosition(StarColor.Wild, 4),
     ),
     (
-        Position(StarColor.Green, 2),
-        Position(StarColor.Green, 3),
-        Position(StarColor.Wild, 4),
-        Position(StarColor.Wild, 5),
+        BoardPosition(StarColor.Green, 2),
+        BoardPosition(StarColor.Green, 3),
+        BoardPosition(StarColor.Wild, 4),
+        BoardPosition(StarColor.Wild, 5),
     ),
     (
-        Position(StarColor.Purple, 2),
-        Position(StarColor.Purple, 3),
-        Position(StarColor.Wild, 5),
-        Position(StarColor.Wild, 6),
+        BoardPosition(StarColor.Purple, 2),
+        BoardPosition(StarColor.Purple, 3),
+        BoardPosition(StarColor.Wild, 5),
+        BoardPosition(StarColor.Wild, 6),
     ),
 )
 
-_STATUE_POSITIONS: Sequence[Sequence[Position]] = (
+_STATUE_POSITIONS: Sequence[Sequence[BoardPosition]] = (
     (
-        Position(StarColor.Orange, 1),
-        Position(StarColor.Orange, 2),
-        Position(StarColor.Red, 3),
-        Position(StarColor.Red, 4),
+        BoardPosition(StarColor.Orange, 1),
+        BoardPosition(StarColor.Orange, 2),
+        BoardPosition(StarColor.Red, 3),
+        BoardPosition(StarColor.Red, 4),
     ),
     (
-        Position(StarColor.Red, 1),
-        Position(StarColor.Red, 2),
-        Position(StarColor.Blue, 3),
-        Position(StarColor.Blue, 4),
+        BoardPosition(StarColor.Red, 1),
+        BoardPosition(StarColor.Red, 2),
+        BoardPosition(StarColor.Blue, 3),
+        BoardPosition(StarColor.Blue, 4),
     ),
     (
-        Position(StarColor.Blue, 1),
-        Position(StarColor.Blue, 2),
-        Position(StarColor.Yellow, 3),
-        Position(StarColor.Yellow, 4),
+        BoardPosition(StarColor.Blue, 1),
+        BoardPosition(StarColor.Blue, 2),
+        BoardPosition(StarColor.Yellow, 3),
+        BoardPosition(StarColor.Yellow, 4),
     ),
     (
-        Position(StarColor.Yellow, 1),
-        Position(StarColor.Yellow, 2),
-        Position(StarColor.Green, 3),
-        Position(StarColor.Green, 4),
+        BoardPosition(StarColor.Yellow, 1),
+        BoardPosition(StarColor.Yellow, 2),
+        BoardPosition(StarColor.Green, 3),
+        BoardPosition(StarColor.Green, 4),
     ),
     (
-        Position(StarColor.Green, 1),
-        Position(StarColor.Green, 2),
-        Position(StarColor.Purple, 3),
-        Position(StarColor.Purple, 4),
+        BoardPosition(StarColor.Green, 1),
+        BoardPosition(StarColor.Green, 2),
+        BoardPosition(StarColor.Purple, 3),
+        BoardPosition(StarColor.Purple, 4),
     ),
     (
-        Position(StarColor.Purple, 1),
-        Position(StarColor.Purple, 2),
-        Position(StarColor.Orange, 3),
-        Position(StarColor.Orange, 4),
+        BoardPosition(StarColor.Purple, 1),
+        BoardPosition(StarColor.Purple, 2),
+        BoardPosition(StarColor.Orange, 3),
+        BoardPosition(StarColor.Orange, 4),
     ),
 )
 
-_WINDOW_POSITIONS: Sequence[Sequence[Position]] = (
+_WINDOW_POSITIONS: Sequence[Sequence[BoardPosition]] = (
     (
-        Position(StarColor.Orange, 5),
-        Position(StarColor.Orange, 6),
+        BoardPosition(StarColor.Orange, 5),
+        BoardPosition(StarColor.Orange, 6),
     ),
     (
-        Position(StarColor.Red, 5),
-        Position(StarColor.Red, 6),
+        BoardPosition(StarColor.Red, 5),
+        BoardPosition(StarColor.Red, 6),
     ),
     (
-        Position(StarColor.Blue, 5),
-        Position(StarColor.Blue, 6),
+        BoardPosition(StarColor.Blue, 5),
+        BoardPosition(StarColor.Blue, 6),
     ),
     (
-        Position(StarColor.Yellow, 5),
-        Position(StarColor.Yellow, 6),
+        BoardPosition(StarColor.Yellow, 5),
+        BoardPosition(StarColor.Yellow, 6),
     ),
     (
-        Position(StarColor.Green, 5),
-        Position(StarColor.Green, 6),
+        BoardPosition(StarColor.Green, 5),
+        BoardPosition(StarColor.Green, 6),
     ),
     (
-        Position(StarColor.Purple, 5),
-        Position(StarColor.Purple, 6),
+        BoardPosition(StarColor.Purple, 5),
+        BoardPosition(StarColor.Purple, 6),
     ),
 )
 
