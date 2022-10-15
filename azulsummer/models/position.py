@@ -1,10 +1,14 @@
+"""Module containing classes for referencing board and draw positions"""
 from __future__ import annotations
 
 from dataclasses import dataclass
 
+from azulsummer.models.enums import TileIndex
+from azulsummer.models.tile_array import TileArray
+
 
 @dataclass(frozen=True)
-class Position:
+class BoardPosition:
     star: int
     tile_value: int
 
@@ -15,3 +19,10 @@ class Position:
     def __iter__(self):
         yield self.star
         yield self.tile_value
+
+
+@dataclass(frozen=True)
+class DrawPosition:
+    location: TileIndex
+    tiles_position: int = 0
+    tiles: TileArray = TileArray([0, 0, 0, 0, 0, 0])
