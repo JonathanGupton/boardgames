@@ -1,5 +1,4 @@
 """Module containing the State class"""
-from collections import deque
 from typing import Optional
 
 from azulsummer.models.enums import Phase
@@ -23,10 +22,6 @@ class State:
         self.round: Optional[int] = None
         self.start_player_index: Optional[int] = None
         self.current_player_index: Optional[int] = None
-
-        # Available and enqueued future actions
-        self.available_actions = []
-        self.next_action = deque()
 
         self.winner = None
 
@@ -81,10 +76,6 @@ class State:
         """Generate all available actions given the current state."""
         pass
 
-    def purge_available_actions(self):
-        """Purge the available actions list."""
-        self.available_actions.clear()
-
     def assign_winner(self) -> None:
         """Assign the player index with the winning score to the winner property"""
         pass
@@ -96,4 +87,3 @@ class State:
             The integer index of the current player.
         """
         return self.current_player_index
-
