@@ -1,3 +1,4 @@
+"""Module containing the Board class"""
 from __future__ import annotations
 
 from collections import deque
@@ -16,7 +17,7 @@ class Board:
     Class representing an Azul Summer Pavilion game board
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         n_tile_spaces = 6
         self.board = np.zeros(shape=(len(StarColor), n_tile_spaces), dtype="B")
 
@@ -39,7 +40,7 @@ class Board:
 
     def score_tile_placement(self, star: StarColor, tile_value: int) -> int:
         """
-        Check the score associated with placing a tile on the provided star
+        Compute the score associated with placing a tile on the provided star
         and value location.
 
         Scoring for placement is 1 plus the count of tiles immediately
@@ -70,7 +71,7 @@ class Board:
         - place at 1 -> 2 points
         - place at 2 -> 1 point
         - place at 3 -> 2 points
-        - place at 4 -> 3 points
+        - place at 5 -> 3 points
 
         """
         score = 1
