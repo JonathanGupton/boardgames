@@ -18,13 +18,11 @@ class TileArray(tuple):
         tile_array = super().__new__(cls, tiles)
         return tile_array
 
-    def __array_finalize__(self, tile_array):
-        pass
-
     @classmethod
     def from_dict(cls, tiles: dict[TileColor, int]) -> "TileArray":
         """Create a TileArray from a dict of TileColor: Counts"""
         return cls([tiles.get(i, 0) for i in TileColor])
 
     def to_dict(self) -> dict[TileColor, int]:
+        """Returns a dict of {TileColor: Counts} for the TileArray"""
         return {TileColor(i): count for i, count in enumerate(self) if count > 0}
