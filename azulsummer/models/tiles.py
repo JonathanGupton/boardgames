@@ -1,7 +1,7 @@
 """Module containing the Tile class"""
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Union
 
 import numpy as np
 
@@ -62,40 +62,51 @@ class Tiles:
     # Number of tiles held on each factory display
     _FACTORY_DISPLAY_TILE_MAX: int = 4
 
-    def __init__(self, n_players: int, seed: Optional[int] = None) -> None:
+    def __init__(self, n_players: int, tile_array: np.ndarray) -> None:
         """Initialize a Tile class.
 
         Tiles begin with the 132 available tiles assigned to the bag.
 
         Args:
             n_players:  The number of players as an integer
-            seed:  The RNG seed to be used.
+
         """
         self._n_players: int = n_players
-        self._n_factory_displays: int = PLAYER_TO_DISPLAY_RATIO[n_players]
-        self._player_board_index: int = (
-            Tiles._FACTORY_DISPLAY_INDEX + self._n_factory_displays
-        )
-        self._player_reserve_index: int = self._player_board_index + (
-            n_players * Tiles._PLAYER_BOARD_ROW_COUNT
-        )
+        self._tiles: np.array = tile_array
 
-        n_tile_rows: int = (
-            4  # bag, tower, table center, and supply rows
-            + self._n_factory_displays
-            + (self._n_players * Tiles._PLAYER_BOARD_ROW_COUNT)
-            + self._n_players  # player reserves
+    @classmethod
+    def new(cls, n_players: int) -> Tiles:
+        """Create a new tile array for n_players"""
+        n_factory_displays = PLAYER_TO_DISPLAY_RATIO[n_players]
+
+        # Instantiate the tile array
+        n_tile_rows = (
+            4 + n_factory_displays + n_players * cls._PLAYER_BOARD_ROW_COUNT + n_players
         )
-        self._tiles: np.array = np.zeros((n_tile_rows, len(TileColor)), "B")
+        tiles_array: np.ndarray = np.zeros((n_tile_rows, len(TileColor)), "B")
 
         # Create the initial distribution of 22 tiles * 6 tile colors
-        self._tiles[self._BAG_INDEX] += np.array(
-            [Tiles._TILE_COUNT] * len(TileColor), "B"
-        )
+        tiles_array[cls._BAG_INDEX] += np.array([cls._TILE_COUNT] * len(TileColor), "B")
+
+        return cls(n_players, tiles_array)
 
     def __repr__(self):
         return (
             f"{self.__class__.__name__}(n_players={self._n_players}, seed={self._seed})"
+        )
+
+    @property
+    def _player_board_index(self) -> int:
+        return self._FACTORY_DISPLAY_INDEX + self._n_factory_displays
+
+    @property
+    def _n_factory_displays(self) -> int:
+        return PLAYER_TO_DISPLAY_RATIO[self._n_players]
+
+    @property
+    def _player_reserve_index(self) -> int:
+        return self._player_board_index + (
+            self._n_players * self._PLAYER_BOARD_ROW_COUNT
         )
 
     """ VIEWS """
@@ -435,5 +446,3 @@ class Tiles:
             f"{self._tiles.sum(axis=0)} is invalid. Only 22 tiles"
             f" are allowed per tile type."
         )
-
-
