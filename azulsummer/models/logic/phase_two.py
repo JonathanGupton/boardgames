@@ -6,6 +6,7 @@ def begin_phase_two(action):
     # Advance turn
     # Set phase turn to 0
     # prepare_phase_two_turn()
+    # set_start_player()
     pass
 
 
@@ -43,4 +44,57 @@ def resolve_phase_two_action(action):
     # -- Is it the end of the game?
     # -- If yes: enqueue resolve_end_of_game()
     # -- If no:  begin_phase_three()
+    pass
+
+
+def set_start_player():
+    pass
+
+
+def increment_score():
+    pass
+
+
+def generate_available_plays():
+    pass
+
+
+def discard_tiles_to_tower():
+    pass
+
+
+def score_tile_placement():
+    pass
+
+
+def evaluate_bonus_positions():
+    pass
+
+
+def generate_supply_space_draws():
+    pass
+
+
+def draw_from_supply_space():
+    pass
+
+
+def pass_turn():
+    pass
+
+
+def generate_saved_tiles_options():
+    pass
+
+
+def evaluate_end_of_phase_two():
+    pass
+
+
+def are_players_playing_in_phase_two() -> bool:
+    """Confirm if players are still playing in Phase Two"""
+    pass
+
+
+def evaluate_hand_size():
     pass
