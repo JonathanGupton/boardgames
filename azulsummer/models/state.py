@@ -1,6 +1,10 @@
 """Module containing the State class"""
+from __future__ import annotations
+
 from typing import Optional
 
+from azulsummer.models.board import Board
+from azulsummer.models.bonus_spaces import BonusSpace
 from azulsummer.models.enums import Phase
 from azulsummer.models.score import Score
 from azulsummer.models.tiles import Tiles
@@ -11,19 +15,69 @@ class State:
     actions that affect the game state are applied via the State class's methods.
     """
 
-    def __init__(self, n_players: int, seed: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        n_players: int,
+        tiles: Tiles,
+        score: Score,
+        boards: list[Board],
+        bonus_spaces: list[BonusSpace],
+        turn: int,
+        phase: Optional[Phase],
+        phase_turn: Optional[int],
+        ply: Optional[int],
+        game_round: Optional[int],
+        start_player_index: Optional[int],
+        current_player_index: Optional[int],
+        winner: Optional[int],
+    ) -> None:
         self.n_players = n_players
-        self.tiles = Tiles(n_players, seed=seed)
-        self.score = Score(n_players)
+        self.tiles = tiles
+        self.score = score
+        self.boards = boards
+        self.bonus_spaces = bonus_spaces
 
         # Phase, order, turn values
-        self.turn: int = 0
-        self.phase: Phase = Phase.acquire_tile
-        self.round: Optional[int] = None
-        self.start_player_index: Optional[int] = None
-        self.current_player_index: Optional[int] = None
+        self.ply = ply
+        self.turn = turn
+        self.phase = phase
+        self.phase_turn = phase_turn
+        self.game_round = game_round
+        self.start_player_index = start_player_index
+        self.current_player_index = current_player_index
 
-        self.winner = None
+        self.winner = winner
+
+    @classmethod
+    def new(cls, n_players: int) -> State:
+        tiles = Tiles.new(n_players)
+        score = Score(n_players)
+        board = [Board.new() for _ in range(n_players)]
+        bonus_spaces = [BonusSpace() for _ in range(n_players)]
+
+        turn = 0
+        phase = None
+        phase_turn = None
+        ply = 0
+        game_round = None
+        start_player_index = None
+        current_player_index = 0
+        winner = None
+        return cls(
+            n_players,
+            tiles,
+            score,
+            board,
+            bonus_spaces,
+            turn,
+            phase,
+            phase_turn,
+            ply,
+            game_round,
+            start_player_index,
+            current_player_index,
+            winner,
+        )
 
     def phase_one_end_criteria_are_met(self) -> bool:
         """Check if the end phase 1 criteria are met.  Returns True if all
@@ -56,7 +110,7 @@ class State:
         Returns:
             None
         """
-        self.round += 1
+        self.game_round += 1
 
     def increment_current_player(self):
         """Increment the player index by one and loop back to player 0 when
