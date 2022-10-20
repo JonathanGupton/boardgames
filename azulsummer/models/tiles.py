@@ -32,15 +32,6 @@ class Tiles:
     """
 
     # TODO:  Add properties and methods to Tiles docstring
-    __slots__ = [
-        "_n_factory_displays",
-        "_n_players",
-        "_player_board_index",
-        "_player_reserve_index",
-        "_rng",
-        "_seed",
-        "_tiles",
-    ]
 
     # There are 22 tiles for each of the 6 colors for a total of 132 tiles
     _TILE_COUNT: int = 22
