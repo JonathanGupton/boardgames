@@ -2,8 +2,9 @@
 
 
 def begin_phase_one():
-    # - Loading Factory tiles (emit "2 green, 1 red placed on tile 1" or
-    #   Event.LoadFactorySpace(space=1, tiles_distrubtion=[])
+    # load factory displays
+    # set player 1
+    # reset start token
     # Set first player
     # Reset first_player flag
     # generate_acquire_tile_actions
@@ -28,6 +29,34 @@ def acquire_tile(action):
     pass
 
 
+def draw_from_table_center():
+    pass
+
+
+def draw_from_factory_display():
+    pass
+
+
+def discard_to_table_center():
+    pass
+
+
+def decrement_score():
+    pass
+
+
+def set_start_player_token():
+    pass
+
+
+def evaluate_end_of_phase_one():
+    pass
+
+
+def clear_start_player_token():
+    pass
+
+
 def resolve_phase_one_action():
     # evaluate remaining tiles in the factory and middle
     # - If tiles -
@@ -36,3 +65,24 @@ def resolve_phase_one_action():
     # -- enqueue begin phase 2 action
 
     pass
+
+
+def are_phase_one_end_criteria_met() -> bool:
+    pass
+
+
+def fill_supply():
+    pass
+
+
+def load_factory_displays():
+    pass
+
+
+def generate_factory_display_draws():
+    pass
+
+
+def generate_middle_draws():
+    pass
+
