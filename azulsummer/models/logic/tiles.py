@@ -11,6 +11,15 @@ from models.tile_array import TileArray
 from models.tiles import Tiles
 
 
+def generate_bag_draw():
+    pass
+
+
+def handle_empty_bag():
+    pass
+
+
+
 def _generate_draws(
     tile_index: TileIndex,
     tiles_values: np.ndarray,

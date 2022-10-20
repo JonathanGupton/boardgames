@@ -1,7 +1,38 @@
 
 
-def begin_phase_one():
+def increment_ply():
     pass
+
+
+def increment_turn():
+    pass
+
+
+def increment_phase_turn():
+    pass
+
+
+def prepare_phase():
+    # set phase_turn = 0
+    # set start_player = start_token_player
+    pass
+
+
+def advance_phase():
+    pass
+
+
+def change_score():
+    pass
+
+
+def increment_score():
+    pass
+
+
+def decrement_score():
+    pass
+
 
 
 def prepare_phase_one_turn():

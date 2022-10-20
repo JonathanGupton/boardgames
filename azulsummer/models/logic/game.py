@@ -22,7 +22,7 @@ def start_game(action: action.StartGame):
     # Call Game Setup
     # - Loading Supply spaces
     # - Loading Factory tiles (emit "2 green, 1 red placed on tile 1" or
-    #   Event.LoadFactorySpace(space=1, tiles_distrubtion=[])
+    #   Event.LoadFactorySpace(space=1, tiles_distribution=[])
     # - Set player scores to 5 for each player
     # - Phase set
     # - Starting player set
