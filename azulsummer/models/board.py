@@ -17,9 +17,14 @@ class Board:
     Class representing an Azul Summer Pavilion game board
     """
 
-    def __init__(self) -> None:
+    def __init__(self, board: np.ndarray) -> None:
+        self.board = board
+
+    @classmethod
+    def new(cls):
         n_tile_spaces = 6
-        self.board = np.zeros(shape=(len(StarColor), n_tile_spaces), dtype="B")
+        board = np.zeros(shape=(len(StarColor), n_tile_spaces), dtype="B")
+        return cls(board)
 
     def is_valid_placement_location(self, star: StarColor, tile_value: int) -> bool:
         """Validate that the star location is a valid placement location"""
