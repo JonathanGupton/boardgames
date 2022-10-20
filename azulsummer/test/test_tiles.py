@@ -10,7 +10,7 @@ from azulsummer.models.tiles import _VALID_TILE_DISTRIBUTION, Tiles
 @pytest.mark.parametrize("n_players,n_tiles", [(2, 132), (3, 132), (4, 132)])
 def test_instantiation_has_132_tiles(n_players, n_tiles):
     """Test that there are 132 tiles regardless of the number of players."""
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     assert t._tiles.sum() == n_tiles
 
 
@@ -19,7 +19,7 @@ def test_n_players_n_tile_rows(n_players, n_rows):
     """Test that the correct number of rows are instantiated based on the
     number of players.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     assert len(t._tiles) == n_rows
 
 
@@ -29,7 +29,7 @@ def test_n_players_out_of_range_error(n_players):
     Tile class
     """
     with pytest.raises(ValueError):
-        Tiles(n_players)
+        Tiles.new(n_players)
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
@@ -37,7 +37,7 @@ def test_validate_invalid_tile_count(n_players):
     """Test that the _check_tile_integrity method raises an error when there are more
     than 132 tiles on the _tile property
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     t._tiles[0][0] += 1
     with pytest.raises(ValueError):
         t._check_tile_integrity()
@@ -48,7 +48,7 @@ def test_validate_invalid_column_tile_count(n_players):
     """Test that the _check_tile_integrity method raises an error when any _tile
     column != 22 tiles.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     t._tiles[0][0] += 1
     t._tiles[0][1] -= 1
     with pytest.raises(ValueError):
@@ -57,13 +57,13 @@ def test_validate_invalid_column_tile_count(n_players):
 
 def test_tiles_equals_valid_tile_distribution():
     """Test that the sum of all tiles is equal to the valid_tile_distribution."""
-    t = Tiles(2)
+    t = Tiles.new(2)
     assert np.array_equal(t._tiles.sum(axis=0), _VALID_TILE_DISTRIBUTION)
 
 
 def test_move_tiles_with_integer_tile():
     """Test moving tiles between two tile locations with int tile location."""
-    t = Tiles(2)
+    t = Tiles.new(2)
     t._move_tiles(0, 1, np.array([22, 0, 0, 0, 0, 0], "B"))
     assert t._tiles[0][0] == 0
     assert t._tiles[1][0] == 22
@@ -71,7 +71,7 @@ def test_move_tiles_with_integer_tile():
 
 def test_move_tiles_value_error():
     """Test a move that results in an invalid tile value."""
-    t = Tiles(2)
+    t = Tiles.new(2)
     with pytest.raises(ValueError):
         t._move_tiles(
             0, 1, np.array([-1, 0, 0, 0, 0, 0], "B")
@@ -81,21 +81,21 @@ def test_move_tiles_value_error():
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_get_bag_quantity_is_132_at_start(n_players):
     """Test that the bag starts with 132 tiles at the game start."""
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     assert t.get_bag_quantity() == 132
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_get_tower_quantity_is_0_at_start(n_players):
     """Test that the tower starts with zero tiles at the game start."""
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     assert t.get_tower_quantity() == 0
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_refill_bag_from_tower(n_players):
     """Test refilling the bag from the tower."""
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     t._tiles[t._BAG_INDEX] *= 0
     t._tiles[t._TOWER_INDEX] += 22
     t._refill_bag_from_tower()
@@ -109,7 +109,7 @@ def test_refill_bag_from_tower(n_players):
 )
 def test_draw_from_bag(n_players):
     for i in range(1, 133):
-        t = Tiles(n_players)
+        t = Tiles.new(n_players)
         t._draw_from_bag(i, t._SUPPLY_INDEX)
         assert np.array_equal(
             _VALID_TILE_DISTRIBUTION - t._tiles[t._SUPPLY_INDEX], t.view_bag()
@@ -122,7 +122,7 @@ def test_draw_from_bag_more_than_available_from_bag_but_enough_in_tower(n_player
     from the tower when the number of tiles requested is greater than the
     number of tiles in the bag.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
 
     # set bag to 0 tiles
     t._tiles[t._BAG_INDEX] *= 0
@@ -144,7 +144,7 @@ def test_draw_from_bag_more_than_available_in_bag_and_tower(n_players):
     """Test that the _draw_from_bag method automatically refills then only sends
     over the remaining tiles in the bag.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
 
     # Set bag to 0 tiles
     t._tiles[t._BAG_INDEX] *= 0
@@ -167,7 +167,7 @@ def test_is_supply_full_is_false_at_instantiation(n_players):
     """Test that the _supply_is_full() method returns False when the
     Tile class is instantiated.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     assert not t._supply_is_full()
 
 
@@ -176,7 +176,7 @@ def test_is_supply_full_is_true_at_first_fill(n_players):
     """Test that the _supply_is_full() method returns True when the
     supply is filled the first time.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     t.fill_supply()
     assert t._supply_is_full()
 
@@ -191,7 +191,7 @@ def test_fill_factory_displays(
     """Test that filling the factory displays loads each display with four
     tiles.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     t.fill_factory_displays()
     assert t._tiles[factory_idx_min:factory_idx_max].sum() == total_tiles
     assert t.get_factory_displays_quantity() == total_tiles
@@ -206,7 +206,7 @@ def test_get_nth_factory_display_view(n_players, factory_idx_min):
     """Test that the view_factory_display_n shows the correct factory
     displays.
     """
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     t.fill_factory_displays()
 
     n_factory_displays = PLAYER_TO_DISPLAY_RATIO[n_players]
@@ -222,7 +222,7 @@ def test_get_nth_factory_display_view(n_players, factory_idx_min):
 )
 def test_get_player_board_views(n_players, rows, cols):
     """Test get_player_board_views returns the correct number of rows."""
-    t = Tiles(n_players)
+    t = Tiles.new(n_players)
     assert t.view_player_boards().shape == (rows, cols)
 
 
@@ -236,7 +236,7 @@ def test_play_tile_to_board_standard_stars(n_players):
         for cost in range(1, 7):
             for color in TileColor:
                 for star in StarColor:
-                    t = Tiles(n_players)
+                    t = Tiles.new(n_players)
                     t._move_tiles(
                         t._BAG_INDEX,
                         t._player_reserve_index + player,
@@ -258,7 +258,7 @@ def test_play_tile_to_board_standard_stars(n_players):
 def test_get_player_reserves_view(n_players, positions):
     """Test view_player_reserves returns the all player reserves."""
     for position_index in range(*positions):
-        t = Tiles(n_players)
+        t = Tiles.new(n_players)
         t._move_tiles(t._BAG_INDEX, position_index, t._tiles[t._BAG_INDEX])
         assert np.array_equal(
             t.view_player_reserves(), t._tiles[positions[0]: positions[1]]
@@ -271,7 +271,7 @@ def test_get_nth_player_reserve_view(n_players, reserve_position):
     view.
     """
     for player_index in range(n_players):
-        t = Tiles(n_players)
+        t = Tiles.new(n_players)
         t._move_tiles(
             source_index=t._BAG_INDEX,
             destination_index=t._player_reserve_index + player_index,
@@ -317,7 +317,7 @@ def test_draw_from_factory_display(n_players):
     for player in range(n_players):
         for factory_display in range(PLAYER_TO_DISPLAY_RATIO[n_players]):
             # Create a tile object
-            t = Tiles(n_players)
+            t = Tiles.new(n_players)
 
             # Fill the supply and factory displays
             t.fill_supply()
@@ -344,7 +344,7 @@ def test_discard_from_factory_display_to_center(n_players):
     """Test discarding from factory display to center for each factory display."""
     for factory_display in range(PLAYER_TO_DISPLAY_RATIO[n_players]):
         # Create a tile object and fill supply and factory displays
-        t = Tiles(n_players)
+        t = Tiles.new(n_players)
         t.fill_supply()
         t.fill_factory_displays()
 
@@ -365,7 +365,7 @@ def test_discard_from_reserve_to_tower(n_players):
     to_copy = np.array([1, 2, 3, 4, 5, 6], "B")
 
     for player in range(n_players):
-        t = Tiles(n_players)
+        t = Tiles.new(n_players)
 
         # move the to_copy array from the bag to the player reserve
         t._move_tiles(t._BAG_INDEX, t._player_reserve_index + player, to_copy)
