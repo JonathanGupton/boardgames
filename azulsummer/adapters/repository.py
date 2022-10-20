@@ -8,7 +8,7 @@ from azulsummer.models.game import Game
 class AbstractRepository(abc.ABC):
     """Base repository for accessing and storing live games"""
     def __init__(self) -> None:
-        pass
+        self.seen = set()
 
     def get(self, game_id: str) -> Game:
         """Get a Game from the live game repository"""
