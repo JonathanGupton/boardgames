@@ -83,7 +83,7 @@ class Tiles:
 
     def __repr__(self):
         return (
-            f"{self.__class__.__name__}(n_players={self._n_players}, seed={self._seed})"
+            f"{self.__class__.__name__}(n_players={self._n_players}, tile_array={self._tiles})"
         )
 
     @property
