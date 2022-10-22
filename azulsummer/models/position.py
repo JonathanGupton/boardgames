@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from azulsummer.models.enums import TileIndex
+from azulsummer.models.enums import TileTarget
 from azulsummer.models.tile_array import TileArray
 
 
@@ -26,3 +27,26 @@ class DrawPosition:
     location: TileIndex
     tiles_position: int = 0
     tiles: TileArray = TileArray([0, 0, 0, 0, 0, 0])
+
+
+@dataclass
+class TilePosition:
+    """Dataclass for specifying the location to play a tile to or from which
+    to retrieve a tile
+
+    TilePosition is used as an argument in the logic modules
+    """
+
+    location: TileTarget
+    nth: int = 0
+
+    def __str__(self):
+        if self.location in {
+            TileTarget.Bag,
+            TileTarget.Tower,
+            TileTarget.TableCenter,
+            TileTarget.Supply,
+        }:
+            return str(self.location.value)
+        else:
+            return f"{str(self.location.value)}-{self.nth}"

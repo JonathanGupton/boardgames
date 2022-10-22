@@ -2,8 +2,10 @@
 
 import uuid
 from dataclasses import dataclass
+from typing import Optional
 
-from azulsummer.players.player import Player
+from azulsummer.models.enums import TileTarget
+from azulsummer.models.game import Game
 
 
 class Action:
@@ -11,121 +13,160 @@ class Action:
 
 
 @dataclass
+class DrawFromBag(Action):
+    game: Game
+    n_tiles_to_draw: int
+    destination: TileTarget
+    nth_position: Optional[int] = None
+
+
+@dataclass
+class StartGame(Action):
+    game: Game
+
+
+@dataclass
+class InitializeGameState(Action):
+    game: Game
+
+
+@dataclass
 class AdvancePhase(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class AdvanceToNextPlayer(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class AdvanceRound(Action):
-    game_id: uuid.UUID
+    game: Game
+
+
+@dataclass
+class ResetPhaseTurn(Action):
+    game: Game
 
 
 @dataclass
 class AdvanceTurn(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class AdvanceWildTileIndex(Action):
-    game_id: uuid.UUID
+    game: Game
+
+
+@dataclass
+class GenerateTileDraw(Action):
+    game: Game
+    tile_count: int
 
 
 @dataclass
 class AssignStartPlayer(Action):
-    game_id: uuid.UUID
-    player: uuid.UUID
+    game: Game
 
 
 @dataclass
 class CreateGame(Action):
-    players: list[Player]
+    pass
 
 
 @dataclass
-class AssignPlayer(Action):
+class PhaseOneComplete(Action):
+    game: Game
+
+
+@dataclass
+class PreparePhaseOne(Action):
+    game: Game
+
+
+@dataclass
+class RegisterPlayer(Action):
+    game: uuid.UUID
     player: uuid.UUID
 
 
 @dataclass
 class ScoreGame(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class IncrementPlayerScore(Action):
-    game_id: uuid.UUID
+    game: Game
     player: uuid.UUID
     delta: int
 
 
 @dataclass
 class DecrementPlayerScore(Action):
-    game_id: uuid.UUID
+    game: Game
     player: uuid.UUID
     delta: int
 
 
 @dataclass
 class LoadBagFromTower(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class LoadTilesToCenter(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
-class LoadTilesToFactoryDisplay(Action):
-    game_id: uuid.UUID
+class FillFactoryDisplays(Action):
+    game: Game
 
 
 @dataclass
-class LoadTilesToSupply(Action):
-    game_id: uuid.UUID
+class FillSupply(Action):
+    game: Game
 
 
 @dataclass
 class LoadTilesToTower(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
-class UnAssignStartPlayer(Action):
-    game_id: uuid.UUID
+class ResetStartToken(Action):
+    game: Game
 
 
 @dataclass
 class DrawFromFactoryDisplay(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class DrawFromSupply(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class DrawFromMiddle(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class PlayTileToPlayerBoard(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class DiscardExcessTiles(Action):
-    game_id: uuid.UUID
+    game: Game
 
 
 @dataclass
 class PassTurn(Action):
-    game_id: uuid.UUID
+    game: Game
     player: uuid.UUID

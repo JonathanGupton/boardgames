@@ -6,17 +6,18 @@ from azulsummer.models.state import State
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_advance_round_method(n_players):
     """Test advancing the round with the State method."""
-    s = State(n_players)
+    s = State.new(n_players)
+    s.game_round = 0
     s.advance_round()
-    assert s.round == 0
+    assert s.game_round == 1
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_fill_supply_method(n_players):
     """Test filling supply from the State method."""
-    s = State(n_players)
+    s = State.new(n_players)
     s.fill_supply()
-    assert s.tiles.is_supply_full()
+    assert s.tiles.supply_is_full()
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])

@@ -18,6 +18,10 @@ class TileArray(tuple):
         tile_array = super().__new__(cls, tiles)
         return tile_array
 
+    def __str__(self):
+        tile_dict = self.to_dict()
+        return str({k.name: v for k, v in tile_dict.items()})
+
     @classmethod
     def from_dict(cls, tiles: dict[TileColor, int]) -> "TileArray":
         """Create a TileArray from a dict of TileColor: Counts"""

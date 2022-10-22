@@ -2,17 +2,23 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Player(ABC):
     def __init__(self):
         pass
 
-    @abstractmethod
-    def assess(self, state) -> int:
+    def handle(self, message):
+        """Function to process incoming messages"""
+        pass
+
+    def handle_action(self, state) -> int:
         """Method containing the player decision-making logic.
 
         Returns the integer index of the action to be taken.
         """
+        pass
+
+    def handle_event(self, message):
         pass

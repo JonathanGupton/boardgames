@@ -65,7 +65,7 @@ def test_tiles_equals_valid_tile_distribution():
 def test_move_tiles_with_integer_tile():
     """Test moving tiles between two tile locations with int tile location."""
     t = Tiles.new(2)
-    t._move_tiles(0, 1, np.array([22, 0, 0, 0, 0, 0], "B"))
+    t.move_tiles(0, 1, np.array([22, 0, 0, 0, 0, 0], "B"))
     assert t._tiles[0][0] == 0
     assert t._tiles[1][0] == 22
 
@@ -74,7 +74,7 @@ def test_move_tiles_value_error():
     """Test a move that results in an invalid tile value."""
     t = Tiles.new(2)
     with pytest.raises(ValueError):
-        t._move_tiles(
+        t.move_tiles(
             0, 1, np.array([-1, 0, 0, 0, 0, 0], "B")
         )  # overflow results in 255
 
@@ -98,8 +98,8 @@ def test_get_tower_quantity_is_0_at_start(n_players):
 def test_refill_bag_from_tower(n_players):
     """Test refilling the bag from the tower."""
     t = Tiles.new(n_players)
-    t._tiles[t._BAG_INDEX] *= 0
-    t._tiles[t._TOWER_INDEX] += 22
+    t._tiles[t.bag_index] *= 0
+    t._tiles[t.tower_index] += 22
     t._refill_bag_from_tower()
     assert np.array_equal(t.view_bag(), np.array([22, 22, 22, 22, 22, 22]))
     assert np.array_equal(t.view_tower(), np.array([0, 0, 0, 0, 0, 0]))
@@ -113,9 +113,9 @@ def test_refill_bag_from_tower(n_players):
 def test_draw_from_bag(n_players):
     for i in range(1, 133):
         t = Tiles.new(n_players)
-        t._draw_from_bag(i, t._SUPPLY_INDEX)
+        t._draw_from_bag(i, t.supply_index)
         assert np.array_equal(
-            _VALID_TILE_DISTRIBUTION - t._tiles[t._SUPPLY_INDEX], t.view_bag()
+            _VALID_TILE_DISTRIBUTION - t._tiles[t.supply_index], t.view_bag()
         )
 
 @pytest.mark.xfail(reason="Logic moved to another module")
@@ -128,17 +128,17 @@ def test_draw_from_bag_more_than_available_from_bag_but_enough_in_tower(n_player
     t = Tiles.new(n_players)
 
     # set bag to 0 tiles
-    t._tiles[t._BAG_INDEX] *= 0
+    t._tiles[t.bag_index] *= 0
 
     # set tower to 4 tiles
-    t._tiles[t._TOWER_INDEX] += np.array([2, 2, 0, 0, 0, 0], "B")
+    t._tiles[t.tower_index] += np.array([2, 2, 0, 0, 0, 0], "B")
 
     # Move the rest of the tiles to table center and validate
-    t._tiles[t._TABLE_CENTER_INDEX] += np.array([20, 20, 22, 22, 22, 22], "B")
+    t._tiles[t.table_center_index] += np.array([20, 20, 22, 22, 22, 22], "B")
     t._check_tile_integrity()
 
     # Draw 4 tiles from the bag and confirm 4 tiles moved
-    t._draw_from_bag(4, t._SUPPLY_INDEX)
+    t._draw_from_bag(4, t.supply_index)
     assert np.array_equal(t.view_supply(), np.array([2, 2, 0, 0, 0, 0], "B"))
 
 @pytest.mark.xfail(reason="Logic moved to another module")
@@ -150,18 +150,18 @@ def test_draw_from_bag_more_than_available_in_bag_and_tower(n_players):
     t = Tiles.new(n_players)
 
     # Set bag to 0 tiles
-    t._tiles[t._BAG_INDEX] *= 0
+    t._tiles[t.bag_index] *= 0
 
     # Put 3 tiles in the tower
-    t._tiles[t._TOWER_INDEX] += np.array([1, 2, 0, 0, 0, 0], "B")
+    t._tiles[t.tower_index] += np.array([1, 2, 0, 0, 0, 0], "B")
 
     # Move the rest to the table center and validate that there are still 22
     # tiles per color
-    t._tiles[t._TABLE_CENTER_INDEX] += np.array([21, 20, 22, 22, 22, 22], "B")
+    t._tiles[t.table_center_index] += np.array([21, 20, 22, 22, 22, 22], "B")
     t._check_tile_integrity()
 
     # Draw 6 tiles to supply_index and confirm only 3 tiles moved
-    t._draw_from_bag(6, t._SUPPLY_INDEX)
+    t._draw_from_bag(6, t.supply_index)
     assert np.array_equal(t.view_supply(), np.array([1, 2, 0, 0, 0, 0], "B"))
 
 @pytest.mark.xfail(reason="Logic moved to another module")
@@ -240,10 +240,10 @@ def test_play_tile_to_board_standard_stars(n_players):
             for color in TileColor:
                 for star in StarColor:
                     t = Tiles.new(n_players)
-                    t._move_tiles(
-                        t._BAG_INDEX,
-                        t._player_reserve_index + player,
-                        t._tiles[t._BAG_INDEX],
+                    t.move_tiles(
+                        t.bag_index,
+                        t.player_reserve_index + player,
+                        t._tiles[t.bag_index],
                     )
                     t.play_tile(player, cost, color, star)
                     if star == StarColor.Wild:
@@ -262,7 +262,7 @@ def test_get_player_reserves_view(n_players, positions):
     """Test view_player_reserves returns the all player reserves."""
     for position_index in range(*positions):
         t = Tiles.new(n_players)
-        t._move_tiles(t._BAG_INDEX, position_index, t._tiles[t._BAG_INDEX])
+        t.move_tiles(t.bag_index, position_index, t._tiles[t.bag_index])
         assert np.array_equal(
             t.view_player_reserves(), t._tiles[positions[0]: positions[1]]
         )
@@ -275,10 +275,10 @@ def test_get_nth_player_reserve_view(n_players, reserve_position):
     """
     for player_index in range(n_players):
         t = Tiles.new(n_players)
-        t._move_tiles(
-            source_index=t._BAG_INDEX,
-            destination_index=t._player_reserve_index + player_index,
-            tiles=t._tiles[t._BAG_INDEX],
+        t.move_tiles(
+            source_index=t.bag_index,
+            destination_index=t.player_reserve_index + player_index,
+            tiles=t._tiles[t.bag_index],
         )
         assert np.array_equal(
             t.view_player_reserve_n(player_index),
@@ -297,14 +297,14 @@ def test_tile_repr(n_players, seed):
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_get_table_center_view(n_players):
     t = Tiles.new(n_players=n_players)
-    t._move_tiles(t._BAG_INDEX, t._TABLE_CENTER_INDEX, t._tiles[t._BAG_INDEX])
-    assert np.array_equal(t.view_table_center(), t._tiles[t._TABLE_CENTER_INDEX])
+    t.move_tiles(t.bag_index, t.table_center_index, t._tiles[t.bag_index])
+    assert np.array_equal(t.view_table_center(), t._tiles[t.table_center_index])
 
 
 @pytest.mark.parametrize("n_players", [2, 3, 4])
 def test_get_table_center_quantity(n_players):
     t = Tiles.new(n_players=n_players)
-    t._move_tiles(t._BAG_INDEX, t._TABLE_CENTER_INDEX, t._tiles[t._BAG_INDEX])
+    t.move_tiles(t.bag_index, t.table_center_index, t._tiles[t.bag_index])
     assert t.get_table_center_quantity() == 132
 
 
@@ -326,7 +326,7 @@ def test_draw_from_factory_display(n_players):
             t.fill_factory_displays()
 
             # Copy the values at the tested factory display by expected index
-            to_compare = t._tiles[t._FACTORY_DISPLAY_INDEX + factory_display].copy()
+            to_compare = t._tiles[t.factory_display_index + factory_display].copy()
 
             # Copy values at the factory display via Tiles method to create
             # the array of tiles be drawn
@@ -370,7 +370,7 @@ def test_discard_from_reserve_to_tower(n_players):
         t = Tiles.new(n_players)
 
         # move the to_copy array from the bag to the player reserve
-        t._move_tiles(t._BAG_INDEX, t._player_reserve_index + player, to_copy)
+        t.move_tiles(t.bag_index, t.player_reserve_index + player, to_copy)
 
         # discard all tiles in the player reserve to the tower
         t._discard_from_reserve_to_tower(player, to_copy)

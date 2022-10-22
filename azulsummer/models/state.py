@@ -22,6 +22,7 @@ class State:
         score: Score,
         boards: list[Board],
         bonus_spaces: list[BonusSpace],
+        wild_tile: Optional[int],
         turn: int,
         phase: Optional[Phase],
         phase_turn: Optional[int],
@@ -36,6 +37,7 @@ class State:
         self.score = score
         self.boards = boards
         self.bonus_spaces = bonus_spaces
+        self.wild_tile = wild_tile
 
         # Phase, order, turn values
         self.ply = ply
@@ -54,6 +56,7 @@ class State:
         score = Score(n_players)
         board = [Board.new() for _ in range(n_players)]
         bonus_spaces = [BonusSpace() for _ in range(n_players)]
+        wild_tile = None
 
         turn = 0
         phase = None
@@ -61,7 +64,7 @@ class State:
         ply = 0
         game_round = None
         start_player_index = None
-        current_player_index = 0
+        current_player_index = None
         winner = None
         return cls(
             n_players,
@@ -69,6 +72,7 @@ class State:
             score,
             board,
             bonus_spaces,
+            wild_tile,
             turn,
             phase,
             phase_turn,

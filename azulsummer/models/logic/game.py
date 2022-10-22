@@ -1,33 +1,49 @@
-"""Module containing the game logic around instantiating and registering games"""
-from models import action
+"""Module containing the game logic """
+from azulsummer.models.actions import AdvancePhase
+from azulsummer.models.actions import AdvanceRound
+from azulsummer.models.actions import AdvanceWildTileIndex
+from azulsummer.models.actions import InitializeGameState
+from azulsummer.models.actions import PreparePhaseOne
+from azulsummer.models.actions import ResetPhaseTurn
+from azulsummer.models.actions import StartGame
+from azulsummer.models.events import BagLoadedWith132Tiles
+from azulsummer.models.events import GameCreatedWithNFactoryDisplays
+from azulsummer.models.events import GameCreatedWithNPlayers
+from azulsummer.models.events import GameStarted
+from azulsummer.models.events import GameStateInitialized
+from azulsummer.models.events import PlayerScoresInitializedAt5
 
 
-def create_new_game(action: action.CreateGame):
-    # Create the empty Game object
-    # Emit game info to player
-    pass
+def start_game(action: StartGame):
+    action.game.enqueue_action(InitializeGameState(game=action.game))
+    action.game.enqueue_event(GameStarted(game=action.game))
 
 
-def register_player(action):
-    # Register player to a game and the game to a player
-    pass
+def initialize_game_state(action: InitializeGameState):
+    action.game.make_state()  # Creates the new game state
 
+    events = [
+        GameStateInitialized(game=action.game),
+        GameCreatedWithNPlayers(
+            game=action.game, n_players=len(action.game.players)
+        ),
+        BagLoadedWith132Tiles(game=action.game),
+        GameCreatedWithNFactoryDisplays(
+            game=action.game,
+            n_factory_displays=action.game.n_factory_displays,
+        ),
+        PlayerScoresInitializedAt5(game=action.game),
+    ]
+    actions = [
+        AdvancePhase(game=action.game),
+        AdvanceRound(game=action.game),
+        AdvanceWildTileIndex(game=action.game),
+        ResetPhaseTurn(game=action.game),
+        PreparePhaseOne(game=action.game),
+    ]
 
-def start_game(action: action.StartGame):
-    # Starting the game should instantiate all the game state values
-    # You cannot know the board, tile, etc. counts without the players being
-    # registered to the game
+    for event in events:
+        action.game.enqueue_event(event)
 
-    # This should enqueue:
-    # Call Game Setup
-    # - Loading Supply spaces
-    # - Loading Factory tiles (emit "2 green, 1 red placed on tile 1" or
-    #   Event.LoadFactorySpace(space=1, tiles_distribution=[])
-    # - Set player scores to 5 for each player
-    # - Phase set
-    # - Starting player set
-    # - Wild Tile set
-
-    # Emit first play action decision
-    pass
-
+    for action_ in actions:
+        action.game.enqueue_action(action_)

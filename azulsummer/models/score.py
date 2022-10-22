@@ -1,6 +1,6 @@
 import numpy as np
 
-from models.enums import StarColor
+from azulsummer.models.enums import StarColor
 
 # TODO:  Are these value objects really in the right place?
 # The point value for completing a star at the end of the game
@@ -22,7 +22,6 @@ COVER_ALL_VALUE = {
     3: 12,
     4: 16,
 }
-
 
 
 class Score(np.ndarray):

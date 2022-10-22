@@ -5,7 +5,7 @@ from collections import deque
 from typing import Type, Callable
 
 from azulsummer.interface import unit_of_work
-from azulsummer.models.action import Action
+from azulsummer.models.actions import Action
 from azulsummer.models.events import Event
 
 logger = logging.getLogger(__name__)

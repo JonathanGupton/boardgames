@@ -1,7 +1,13 @@
-
-
-def increment_ply():
-    pass
+from azulsummer.models.actions import AdvancePhase
+from azulsummer.models.actions import AdvanceRound
+from azulsummer.models.actions import AdvanceWildTileIndex
+from azulsummer.models.actions import ResetPhaseTurn
+from azulsummer.models.enums import Phase
+from azulsummer.models.enums import WildTiles
+from azulsummer.models.events import PhaseAdvanced
+from azulsummer.models.events import PhaseTurnSetToZero
+from azulsummer.models.events import RoundAdvanced
+from azulsummer.models.events import WildTileIndexAdvanced
 
 
 def increment_turn():
@@ -12,34 +18,52 @@ def increment_phase_turn():
     pass
 
 
-def prepare_phase():
-    # set phase_turn = 0
-    # set start_player = start_token_player
-    pass
+# def generate_draw(action: GenerateTileDraw) -> TileArray:
+#     tiles = generate_bag_draw(action.game.state.tiles)
+#     action.game.event_queue.append(TileDrawGenerated(action.game, str(tiles)))
+#     return tiles
 
 
-def advance_phase():
-    pass
+def advance_phase(action: AdvancePhase) -> None:
+    """Advance the game's phase"""
+    current_phase = action.game.phase
+    if current_phase is None:
+        action.game.phase = Phase.acquire_tile
+    else:
+        action.game.phase = Phase((current_phase + 1) % len(Phase))
+    action.game.enqueue_event(
+        PhaseAdvanced(action.game, str(action.game.phase))
+    )
 
 
-def change_score():
-    pass
+def advance_round(action: AdvanceRound) -> None:
+    """Advance the game's round"""
+    current_round = action.game.state.game_round
+    if current_round is None:
+        action.game.state.game_round = 1
+    else:
+        action.game.state.game_round += 1
+    action.game.event_queue.append(
+        RoundAdvanced(game=action.game, round=action.game.state.game_round)
+    )
 
 
-def increment_score():
-    pass
+def advance_wild_tile_index(action: AdvanceWildTileIndex) -> None:
+    """Advance the Wild Tile index"""
+    current_wild_tile = action.game.state.wild_tile
+    if current_wild_tile is None:
+        action.game.state.wild_tile = WildTiles(0)
+    else:
+        action.game.state.wild_tile = WildTiles(current_wild_tile + 1)
+    action.game.event_queue.append(
+        WildTileIndexAdvanced(action.game, str(action.game.state.wild_tile))
+    )
 
 
-def decrement_score():
-    pass
-
-
-
-def prepare_phase_one_turn():
-    # advance to next player
-    # advance phase turn
-    # Generate available draws and emit to player
-    pass
+def reset_phase_turn(action: ResetPhaseTurn):
+    """Reset the Phase Turn to 0 at the start of a phase"""
+    action.game.state.phase_turn = 0
+    action.game.event_queue.append(PhaseTurnSetToZero(action.game))
 
 
 def acquire_tile(action):
@@ -122,3 +146,5 @@ def resolve_end_of_game(action):
     #   Assess all 1's, 2's, 3's and 4's
     #   Discard remaining tiles and lose points
     pass
+
+

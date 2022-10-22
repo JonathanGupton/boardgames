@@ -78,7 +78,6 @@ class Board:
         - place at 2 -> 1 point
         - place at 3 -> 2 points
         - place at 5 -> 3 points
-
         """
         score = 1
         index = tile_value - 1

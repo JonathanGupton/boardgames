@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from enum import IntEnum, unique
+from enum import IntEnum, unique, Enum
 
 # Ratio of Number of players : Number of factory displays
 PLAYER_TO_DISPLAY_RATIO: dict[int, int] = {2: 5, 3: 7, 4: 9}
@@ -61,3 +61,13 @@ class TileIndex(IntEnum):
     TableCenter = 2
     Supply = 3
     FactoryDisplay = 4
+
+
+class TileTarget(Enum):
+    Bag = "Bag"
+    Tower = "Tower"
+    TableCenter = "Table Center"
+    Supply = "Supply"
+    FactoryDisplay = "Factory Display"
+    PlayerBoard = "Player Board"
+    PlayerReserve = "Player Reserve"
