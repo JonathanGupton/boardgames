@@ -1,11 +1,12 @@
 """Module containing the logic for Phase One of an Azul Summer Pavilion game"""
 
-from azulsummer.models.actions import AssignStartPlayer
+from azulsummer.models.actions import AssignCurrentPlayerToStartPlayer
 from azulsummer.models.actions import FillFactoryDisplays
 from azulsummer.models.actions import FillSupply
 from azulsummer.models.actions import PhaseOneComplete
+from azulsummer.models.actions import PlayPhaseOneTurn
 from azulsummer.models.actions import PreparePhaseOne
-from azulsummer.models.actions import ResetStartToken
+from azulsummer.models.actions import ResetStartPlayerToken
 from azulsummer.models.events import BeginningPhaseOnePreparation
 from azulsummer.models.events import PhaseOnePrepared
 from azulsummer.models.logic import tiles
@@ -24,8 +25,8 @@ def prepare_phase_one(action: PreparePhaseOne):
     actions = [
         FillSupply(game=action.game),
         FillFactoryDisplays(game=action.game),
-        AssignStartPlayer(game=action.game),
-        ResetStartToken(game=action.game),
+        AssignCurrentPlayerToStartPlayer(game=action.game),
+        ResetStartPlayerToken(game=action.game),
         PhaseOneComplete(game=action.game),
     ]
     for action_ in actions:
@@ -40,13 +41,35 @@ def phase_one_preparation_complete(action: PhaseOneComplete) -> None:
     This should call the 'generate tiles' action and enqueue calling the player
     """
     action.game.enqueue_event(PhaseOnePrepared(game=action.game))
-
+    action.game.enqueue_action(PlayPhaseOneTurn(game))
 
 
 def prepare_phase_one_turn():
-    # advance to next player
+    # advance to next players
     # advance phase turn
-    # Generate available draws and emit to player
+    # play_turn()
+    pass
+
+
+def play_phase_one_turn():
+    # draws = [*generate_acquire_tile_draws(game.tiles)]
+    # draw_to_play = action.game.current_player.assess(
+    # AssessPhaseOneTileDrawAction(draws)
+    # )
+    # play_phase_one_tile_draw(DrawTileAction(draw_to_play))
+    # resolve_phase_one_turn()
+    pass
+
+
+
+
+def resolve_phase_one_turn():
+    # evaluate remaining tiles in the factory and middle
+    # - If tiles -
+    # -- prepare_phase_one_turn()
+    # - If not tiles -
+    # -- enqueue begin phase 2 action
+
     pass
 
 
@@ -89,14 +112,7 @@ def clear_start_player_token():
     pass
 
 
-def resolve_phase_one_action():
-    # evaluate remaining tiles in the factory and middle
-    # - If tiles -
-    # -- prepare_phase_one_turn()
-    # - If not tiles -
-    # -- enqueue begin phase 2 action
 
-    pass
 
 
 def are_phase_one_end_criteria_met() -> bool:

@@ -129,3 +129,19 @@ class Game:
         self.state.tiles.move_tiles(
             source_index=source_index, destination_index=destination_index, tiles=tiles
         )
+
+    @property
+    def start_player_index(self):
+        return self.state.start_player_index
+
+    @start_player_index.setter
+    def start_player_index(self, value: int):
+        self.state.start_player_index = value
+
+    @property
+    def current_player_index(self):
+        return self.state.current_player_index
+
+    @current_player_index.setter
+    def current_player_index(self, value: int):
+        self.state.current_player_index = value

@@ -10,6 +10,17 @@ class Event:
 
 
 @dataclass
+class CurrentPlayerSet(Event):
+    game: Game
+    player_index: int
+
+
+@dataclass
+class StartPlayerTokenWasReset(Event):
+    game: Game
+
+
+@dataclass
 class TilesDrawnFromBag(Event):
     game: Game
     tiles: TileArray

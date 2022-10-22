@@ -13,6 +13,11 @@ class Action:
 
 
 @dataclass
+class PlayPhaseOneTurn(Action):
+    game: Game
+
+
+@dataclass
 class DrawFromBag(Action):
     game: Game
     n_tiles_to_draw: int
@@ -118,6 +123,16 @@ class LoadBagFromTower(Action):
 
 @dataclass
 class LoadTilesToCenter(Action):
+    game: Game
+
+
+@dataclass
+class AssignCurrentPlayerToStartPlayer(Action):
+    game: Game
+
+
+@dataclass
+class ResetStartPlayerToken(Action):
     game: Game
 
 

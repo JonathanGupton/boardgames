@@ -5,16 +5,20 @@ from azulsummer.models import actions
 from azulsummer.models.actions import AdvancePhase
 from azulsummer.models.actions import AdvanceRound
 from azulsummer.models.actions import AdvanceWildTileIndex
+from azulsummer.models.actions import AssignCurrentPlayerToStartPlayer
 from azulsummer.models.actions import FillFactoryDisplays
 from azulsummer.models.actions import FillSupply
 from azulsummer.models.actions import InitializeGameState
 from azulsummer.models.actions import PhaseOneComplete
+from azulsummer.models.actions import PlayPhaseOneTurn
 from azulsummer.models.actions import PreparePhaseOne
 from azulsummer.models.actions import ResetPhaseTurn
+from azulsummer.models.actions import ResetStartPlayerToken
 from azulsummer.models.actions import StartGame
 from azulsummer.models.events import AssignedStartPlayer
 from azulsummer.models.events import BagLoadedWith132Tiles
 from azulsummer.models.events import BeginningPhaseOnePreparation
+from azulsummer.models.events import CurrentPlayerSet
 from azulsummer.models.events import GameCreatedWithNFactoryDisplays
 from azulsummer.models.events import GameCreatedWithNPlayers
 from azulsummer.models.events import GameStarted
@@ -27,6 +31,7 @@ from azulsummer.models.events import PhaseTurnSetToZero
 from azulsummer.models.events import PlayerScoresInitializedAt5
 from azulsummer.models.events import RefillBagFromTower
 from azulsummer.models.events import RoundAdvanced
+from azulsummer.models.events import StartPlayerTokenWasReset
 from azulsummer.models.events import StartTokenReset
 from azulsummer.models.events import TileDrawGenerated
 from azulsummer.models.events import TilesDrawnFromBag
@@ -50,6 +55,8 @@ ALL_PHASE_HANDLERS: dict[Type[actions.Action], Callable] = {
     AdvancePhase: all_phase.advance_phase,
     AdvanceRound: all_phase.advance_round,
     AdvanceWildTileIndex: all_phase.advance_wild_tile_index,
+    AssignCurrentPlayerToStartPlayer: all_phase.assign_current_player_to_start_player,
+    ResetStartPlayerToken: all_phase.reset_start_player_index_value,
     ResetPhaseTurn: all_phase.reset_phase_turn,
 }
 
@@ -57,6 +64,7 @@ PHASE_ONE_HANDLERS: dict[Type[actions.Action], Callable] = {
     FillFactoryDisplays: phase_one.fill_factory_displays,
     PreparePhaseOne: phase_one.prepare_phase_one,
     PhaseOneComplete: phase_one.phase_one_preparation_complete,
+    PlayPhaseOneTurn: phase_one.play_phase_one_turn,
 }
 
 PHASE_TWO_HANDLERS: dict[Type[actions.Action], Callable] = {}
@@ -104,4 +112,6 @@ EVENT_HANDLERS = {
     TilesMoved: DEFAULT_EVENT_HANDLER,
     RefillBagFromTower: DEFAULT_EVENT_HANDLER,
     TilesDrawnFromBag: DEFAULT_EVENT_HANDLER,
+    CurrentPlayerSet: DEFAULT_EVENT_HANDLER,
+    StartPlayerTokenWasReset: DEFAULT_EVENT_HANDLER,
 }

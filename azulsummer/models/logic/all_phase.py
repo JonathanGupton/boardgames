@@ -1,13 +1,18 @@
 from azulsummer.models.actions import AdvancePhase
 from azulsummer.models.actions import AdvanceRound
 from azulsummer.models.actions import AdvanceWildTileIndex
+from azulsummer.models.actions import AssignCurrentPlayerToStartPlayer
 from azulsummer.models.actions import ResetPhaseTurn
+from azulsummer.models.actions import ResetStartPlayerToken
 from azulsummer.models.enums import Phase
 from azulsummer.models.enums import WildTiles
+from azulsummer.models.events import CurrentPlayerSet
 from azulsummer.models.events import PhaseAdvanced
 from azulsummer.models.events import PhaseTurnSetToZero
 from azulsummer.models.events import RoundAdvanced
+from azulsummer.models.events import StartPlayerTokenWasReset
 from azulsummer.models.events import WildTileIndexAdvanced
+from azulsummer.models.game import Game
 
 
 def increment_turn():
@@ -31,9 +36,28 @@ def advance_phase(action: AdvancePhase) -> None:
         action.game.phase = Phase.acquire_tile
     else:
         action.game.phase = Phase((current_phase + 1) % len(Phase))
-    action.game.enqueue_event(
-        PhaseAdvanced(action.game, str(action.game.phase))
-    )
+    action.game.enqueue_event(PhaseAdvanced(action.game, str(action.game.phase)))
+
+
+def assign_current_player_to_start_player(
+    action: AssignCurrentPlayerToStartPlayer,
+) -> None:
+    """Assign the current_player to the start_token player"""
+    if action.game.start_player_index is None:
+        player_to_start = 0
+    else:
+        player_to_start = action.game.start_player_index
+    assign_current_player(action.game, player_to_start)
+
+
+def assign_current_player(game: Game, player_index: int) -> None:
+    game.current_player_index = player_index
+    game.enqueue_event(CurrentPlayerSet(game=game, player_index=player_index))
+
+
+def reset_start_player_index_value(action: ResetStartPlayerToken) -> None:
+    action.game.start_player_index = None
+    action.game.enqueue_event(StartPlayerTokenWasReset(game=action.game))
 
 
 def advance_round(action: AdvanceRound) -> None:
@@ -146,5 +170,3 @@ def resolve_end_of_game(action):
     #   Assess all 1's, 2's, 3's and 4's
     #   Discard remaining tiles and lose points
     pass
-
-
