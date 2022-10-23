@@ -58,9 +58,9 @@ class State:
         bonus_spaces = [BonusSpace() for _ in range(n_players)]
         wild_tile = None
 
-        turn = 0
+        turn = 1
         phase = None
-        phase_turn = None
+        phase_turn = 1
         ply = 0
         game_round = None
         start_player_index = None
