@@ -12,9 +12,9 @@ from azulsummer.players.player import Player
 class RandomPlayer(Player):
     """Player class that randomly chooses an available action."""
 
-    def __init__(self, seed: Optional[int]):
+    def __init__(self, seed: Optional[int] = None) -> None:
         super().__init__()
         self.seed = seed if seed else 1
 
-    def assess(self, state):
-        return random.choice(state.available_actions)
+    def _assess(self, action):
+        return random.choice(action.available_actions)

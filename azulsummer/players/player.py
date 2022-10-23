@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import abc
 from abc import ABC
 
 
@@ -22,3 +23,10 @@ class Player(ABC):
 
     def handle_event(self, message):
         pass
+
+    def assess(self, message):
+        return self._assess(message)
+
+    @abc.abstractmethod
+    def _assess(self, message):
+        raise NotImplementedError
