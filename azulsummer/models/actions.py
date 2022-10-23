@@ -6,6 +6,7 @@ from typing import Optional
 
 from azulsummer.models.enums import TileTarget
 from azulsummer.models.game import Game
+from azulsummer.models.position import DrawPosition
 
 
 class Action:
@@ -15,6 +16,12 @@ class Action:
 @dataclass
 class PlayPhaseOneTurn(Action):
     game: Game
+
+
+@dataclass
+class HandlePhaseOneTileDraw(Action):
+    game: Game
+    draw_position: DrawPosition
 
 
 @dataclass
@@ -33,6 +40,12 @@ class StartGame(Action):
 @dataclass
 class InitializeGameState(Action):
     game: Game
+
+
+@dataclass
+class AssessPhaseOneTileDrawAction(Action):
+    game: Game
+    available_actions: list[DrawPosition]
 
 
 @dataclass

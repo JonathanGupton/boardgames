@@ -28,6 +28,12 @@ class DrawPosition:
     tiles_position: int = 0
     tiles: TileArray = TileArray([0, 0, 0, 0, 0, 0])
 
+    def __str__(self):
+        return f"{self.location.name}-{self.tiles_position} - {str(self.tiles)}"
+
+    def as_tile_position(self) -> TilePosition:
+        return TilePosition(getattr(TileTarget, self.location.name), self.tiles_position)
+
 
 @dataclass
 class TilePosition:
@@ -50,3 +56,5 @@ class TilePosition:
             return str(self.location.value)
         else:
             return f"{str(self.location.value)}-{self.nth}"
+
+

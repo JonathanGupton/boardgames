@@ -10,6 +10,19 @@ class Event:
 
 
 @dataclass
+class PlayerSelectedTilesToAcquire(Event):
+    game: Game
+    player: int
+    tiles_drawn: str
+
+
+@dataclass
+class PhaseOneDrawsGenerated(Event):
+    game: Game
+    draws: list[str]
+
+
+@dataclass
 class CurrentPlayerSet(Event):
     game: Game
     player_index: int
@@ -18,6 +31,12 @@ class CurrentPlayerSet(Event):
 @dataclass
 class StartPlayerTokenWasReset(Event):
     game: Game
+
+
+@dataclass
+class StartPlayerTokenWasSet(Event):
+    game: Game
+    player: int
 
 
 @dataclass
@@ -121,6 +140,12 @@ class WildTileIndexAdvanced(Event):
 
 
 @dataclass
+class PlayerIsFirstToDrawFromTableCenter(Event):
+    game: Game
+    player: int
+
+
+@dataclass
 class AssignedStartPlayer(Event):
     game: Game
 
@@ -138,6 +163,16 @@ class IncrementedPlayerScore(Event):
 @dataclass
 class DecrementedPlayerScore(Event):
     game: Game
+    decreased_by: int
+    original_score: int
+    new_score: int
+
+
+@dataclass
+class DiscardTilesFromFactoryDisplayToTableCenter(Event):
+    game: Game
+    factory_display: int
+    tiles_moved: str
 
 
 @dataclass

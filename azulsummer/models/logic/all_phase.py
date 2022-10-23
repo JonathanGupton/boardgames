@@ -42,7 +42,10 @@ def advance_phase(action: AdvancePhase) -> None:
 def assign_current_player_to_start_player(
     action: AssignCurrentPlayerToStartPlayer,
 ) -> None:
-    """Assign the current_player to the start_token player"""
+    """
+    Assign the player that starts the phase.  This is called at the beginning of
+    each phase.
+    """
     if action.game.start_player_index is None:
         player_to_start = 0
     else:

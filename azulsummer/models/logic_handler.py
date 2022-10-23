@@ -1,5 +1,7 @@
 """Contains the mapping for action/event messages and the associated function """
-from typing import Callable, Type
+import pprint
+from typing import Callable
+from typing import Type
 
 from azulsummer.models import actions
 from azulsummer.models.actions import AdvancePhase
@@ -19,6 +21,8 @@ from azulsummer.models.events import AssignedStartPlayer
 from azulsummer.models.events import BagLoadedWith132Tiles
 from azulsummer.models.events import BeginningPhaseOnePreparation
 from azulsummer.models.events import CurrentPlayerSet
+from azulsummer.models.events import DecrementedPlayerScore
+from azulsummer.models.events import DiscardTilesFromFactoryDisplayToTableCenter
 from azulsummer.models.events import GameCreatedWithNFactoryDisplays
 from azulsummer.models.events import GameCreatedWithNPlayers
 from azulsummer.models.events import GameStarted
@@ -26,12 +30,16 @@ from azulsummer.models.events import GameStateInitialized
 from azulsummer.models.events import LoadedTilesToFactoryDisplay
 from azulsummer.models.events import LoadedTilesToSupply
 from azulsummer.models.events import PhaseAdvanced
+from azulsummer.models.events import PhaseOneDrawsGenerated
 from azulsummer.models.events import PhaseOnePrepared
 from azulsummer.models.events import PhaseTurnSetToZero
+from azulsummer.models.events import PlayerIsFirstToDrawFromTableCenter
 from azulsummer.models.events import PlayerScoresInitializedAt5
+from azulsummer.models.events import PlayerSelectedTilesToAcquire
 from azulsummer.models.events import RefillBagFromTower
 from azulsummer.models.events import RoundAdvanced
 from azulsummer.models.events import StartPlayerTokenWasReset
+from azulsummer.models.events import StartPlayerTokenWasSet
 from azulsummer.models.events import StartTokenReset
 from azulsummer.models.events import TileDrawGenerated
 from azulsummer.models.events import TilesDrawnFromBag
@@ -88,7 +96,7 @@ ACTION_HANDLERS: dict[Type[actions.Action], Callable] = {
 
 
 def DEFAULT_EVENT_HANDLER(args):
-    print(args)
+    pprint.pprint(args)
 
 
 EVENT_HANDLERS = {
@@ -114,4 +122,10 @@ EVENT_HANDLERS = {
     TilesDrawnFromBag: DEFAULT_EVENT_HANDLER,
     CurrentPlayerSet: DEFAULT_EVENT_HANDLER,
     StartPlayerTokenWasReset: DEFAULT_EVENT_HANDLER,
+    PhaseOneDrawsGenerated: DEFAULT_EVENT_HANDLER,
+    PlayerSelectedTilesToAcquire: DEFAULT_EVENT_HANDLER,
+    StartPlayerTokenWasSet: DEFAULT_EVENT_HANDLER,
+    DecrementedPlayerScore: DEFAULT_EVENT_HANDLER,
+    PlayerIsFirstToDrawFromTableCenter: DEFAULT_EVENT_HANDLER,
+    DiscardTilesFromFactoryDisplayToTableCenter: DEFAULT_EVENT_HANDLER,
 }

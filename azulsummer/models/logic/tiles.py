@@ -1,7 +1,8 @@
 """Module containing the game logic acting on the Tile object"""
 from __future__ import annotations
 
-from typing import Optional
+from itertools import chain
+from typing import Generator
 
 import numpy as np
 
@@ -19,78 +20,73 @@ from azulsummer.models.tile_array import TileArray
 from azulsummer.models.tiles import Tiles
 
 
-def _generate_draws(
+def generate_draws(
     tile_index: TileIndex,
-    tiles_values: np.ndarray,
-    tiles_position: int,
+    tile_distribution: np.ndarray,
+    nth_tile_position: int,
     wild_position: TileColor,
-    draws: list[DrawPosition],
-) -> None:
-    # TODO:  Add docstring for _generate_draws function
-    # TODO:  Split this into a 'append to draws' func and a 'generate the draws' func
-    if tiles_values.sum() == 0:
+) -> Generator[DrawPosition, None, None]:
+    if tile_distribution.sum() == 0:
         return
-    wild_value: int = 1 if tiles_values[wild_position] > 0 else 0
-    for tile_position, tile_value in enumerate(tiles_values):
+    wild_value: int = min(tile_distribution[wild_position], 1)
+    for tile_position, tile_value in enumerate(tile_distribution):
         if not tile_value:
             continue
         if tile_position != wild_position:
-            draws.append(
-                DrawPosition(
-                    location=tile_index,
-                    tiles_position=tiles_position,
-                    tiles=TileArray.from_dict(
-                        {tile_index: tile_value, wild_position: wild_value}
-                    ),
-                )
+            yield DrawPosition(
+                location=tile_index,
+                tiles_position=nth_tile_position,
+                tiles=TileArray.from_dict(
+                    {tile_position: tile_value, wild_position: wild_value}
+                ),
             )
         else:
-            if tiles_values.sum() == tile_value:
-                draws.append(
-                    DrawPosition(
-                        location=TileIndex.FactoryDisplay,
-                        tiles_position=tiles_position,
-                        tiles=TileArray.from_dict({wild_position: wild_value}),
-                    )
+            if (tile_position == wild_position) and (
+                tile_distribution.sum() == tile_value
+            ):
+                yield DrawPosition(
+                    location=TileIndex.FactoryDisplay,
+                    tiles_position=nth_tile_position,
+                    tiles=TileArray.from_dict({wild_position: wild_value}),
                 )
 
 
-def _generate_factory_display_tile_draws(
-    tiles: Tiles, wild_position: TileColor, draws: list[DrawPosition]
-) -> None:
+def generate_factory_display_tile_draws(
+    tiles: Tiles, wild_position: TileColor
+) -> Generator[DrawPosition, None, None]:
     for tiles_position, factory_display in enumerate(tiles.view_factory_displays()):
-        _generate_draws(
+        yield from generate_draws(
             tile_index=TileIndex.FactoryDisplay,
-            tiles_values=factory_display,
-            tiles_position=tiles_position,
+            tile_distribution=factory_display,
+            nth_tile_position=tiles_position,
             wild_position=wild_position,
-            draws=draws,
         )
 
 
-def _generate_table_middle_tile_draws(
-    tiles: Tiles, wild_position: TileColor, draws: list[DrawPosition]
-) -> None:
-    _generate_draws(
+def generate_table_middle_tile_draws(
+    tiles: Tiles, wild_position: TileColor
+) -> Generator[TilePosition, None, None]:
+    yield from generate_draws(
         tile_index=TileIndex.TableCenter,
-        tiles_values=tiles.view_table_center(),
-        tiles_position=0,
+        tile_distribution=tiles.view_table_center(),
+        nth_tile_position=0,
         wild_position=wild_position,
-        draws=draws,
     )
 
 
 def generate_acquire_tile_draws(
     tiles: Tiles, wild_color: WildTiles
-) -> list[DrawPosition]:
-    draw_positions: list[Optional[DrawPosition]] = []
+) -> Generator[DrawPosition, None, None]:
+    """Generate the Acquire Tile draw actions to be assessed by the player"""
     wild_position: TileColor = TileColor[wild_color.name]
-    _generate_factory_display_tile_draws(tiles, wild_position, draw_positions)
-    _generate_table_middle_tile_draws(tiles, wild_position, draw_positions)
-    return draw_positions
+    yield from chain(
+        generate_factory_display_tile_draws(tiles, wild_position),
+        generate_table_middle_tile_draws(tiles, wild_position),
+    )
 
 
 def fill_factory_display(game: Game, nth: int):
+    """Load a single factory display"""
     draw_from_bag(
         game=game,
         n_tiles_to_draw=game.factory_display_tile_max,
@@ -124,10 +120,8 @@ def draw_from_bag(game: Game, n_tiles_to_draw: int, destination: TilePosition) -
     Returns:
         None
     """
-    moved = None
     if game.bag_quantity < n_tiles_to_draw:
         initial_bag_quantity = game.bag_quantity
-        moved = game.bag_tiles
         move_tiles(
             game,
             source=TilePosition(TileTarget.Bag),
@@ -145,25 +139,6 @@ def draw_from_bag(game: Game, n_tiles_to_draw: int, destination: TilePosition) -
         destination=destination,
         tiles=delta,
     )
-    moved = moved + delta if moved else delta
-    # game.event_queue.append(TilesDrawnFromBag(game, moved))
-
-
-def parse_position(game, position: TilePosition) -> int:
-    if position.location == TileTarget.Bag:
-        return game.bag_index
-    elif position.location == TileTarget.Tower:
-        return game.tower_index
-    elif position.location == TileTarget.TableCenter:
-        return game.table_center_index
-    elif position.location == TileTarget.Supply:
-        return game.supply_index
-    elif position.location == TileTarget.FactoryDisplay:
-        return game.factory_display_index + position.nth
-    elif position.location == TileTarget.PlayerBoard:
-        return game.player_board_index + (game.player_board_row_count * position.nth)
-    elif position.location == TileTarget.PlayerReserve:
-        return game.player_reserve_index + position.nth
 
 
 def move_tiles(
@@ -192,3 +167,22 @@ def refill_bag_from_tower(game):
             tiles=game.tower_tiles,
         )
         game.enqueue_event(RefillBagFromTower(game, game.tower_tiles))
+
+
+def parse_position(game, position: TilePosition) -> int:
+    if position.location == TileTarget.Bag:
+        return game.bag_index
+    elif position.location == TileTarget.Tower:
+        return game.tower_index
+    elif position.location == TileTarget.TableCenter:
+        return game.table_center_index
+    elif position.location == TileTarget.Supply:
+        return game.supply_index
+    elif position.location == TileTarget.FactoryDisplay:
+        return game.factory_display_index + position.nth
+    elif position.location == TileTarget.PlayerBoard:
+        return game.player_board_index + (game.player_board_row_count * position.nth)
+    elif position.location == TileTarget.PlayerReserve:
+        return game.player_reserve_index + position.nth
+    else:
+        raise ValueError("Position not found")

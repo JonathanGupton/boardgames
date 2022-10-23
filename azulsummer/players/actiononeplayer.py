@@ -9,5 +9,5 @@ from azulsummer.players.player import Player
 class ActionOnePlayer(Player):
     """Player class that always plays the first available action."""
 
-    def assess(self, state):
-        return state.available_actions[0]
+    def assess(self, action: "Action") -> "Action":
+        return action.available_actions[0]

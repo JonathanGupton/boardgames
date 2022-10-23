@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Sequence, Optional
+from typing import Optional
+from typing import Sequence
 from uuid import uuid4
 
 from azulsummer.models.random import RandomTileDraw
@@ -145,3 +146,30 @@ class Game:
     @current_player_index.setter
     def current_player_index(self, value: int):
         self.state.current_player_index = value
+
+    @property
+    def tiles(self):
+        return self.state.tiles
+
+    @property
+    def wild_tile(self):
+        return self.state.wild_tile
+
+    @property
+    def current_player(self):
+        return self.players[self.current_player_index]
+
+    def reduce_score(self, player_index: int, amount: int):
+        self.state.score[player_index] -= amount
+
+    @property
+    def score(self):
+        return self.state.score
+
+    def discard_from_factory_display_to_center(self, factory_display: int) -> None:
+        self.tiles.discard_from_factory_display_to_center(factory_display)
+
+    def factory_display_tile_distribution(self, factory_display_n: int):
+        return self.state.tiles.view_factory_display_n(
+            factory_display_n=factory_display_n
+        )

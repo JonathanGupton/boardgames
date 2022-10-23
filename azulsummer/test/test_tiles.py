@@ -3,8 +3,11 @@
 import numpy as np
 import pytest
 
-from azulsummer.models.enums import PLAYER_TO_DISPLAY_RATIO, StarColor, TileColor
-from azulsummer.models.tiles import _VALID_TILE_DISTRIBUTION, Tiles
+from azulsummer.models.enums import PLAYER_TO_DISPLAY_RATIO
+from azulsummer.models.enums import StarColor
+from azulsummer.models.enums import TileColor
+from azulsummer.models.tiles import Tiles
+from azulsummer.models.tiles import _VALID_TILE_DISTRIBUTION
 
 
 @pytest.mark.parametrize("n_players,n_tiles", [(2, 132), (3, 132), (4, 132)])
@@ -353,7 +356,7 @@ def test_discard_from_factory_display_to_center(n_players):
         # Copy the value at the nth factory display to to_discard then discard
         # the tiles at the nth factory display to the center
         to_discard = t.view_factory_display_n(factory_display).copy()
-        t._discard_from_factory_display_to_center(factory_display)
+        t.discard_from_factory_display_to_center(factory_display)
 
         # Verify that the new center_view is equal to the copied values and
         # the value at the nth factory display is 0.
