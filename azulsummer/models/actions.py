@@ -105,7 +105,7 @@ class CreateGame(Action):
 
 
 @dataclass
-class PhaseOneComplete(Action):
+class PhaseOnePreparationComplete(Action):
     game: Game
 
 

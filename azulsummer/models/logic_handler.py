@@ -11,7 +11,7 @@ from azulsummer.models.actions import AssignCurrentPlayerToStartPlayer
 from azulsummer.models.actions import FillFactoryDisplays
 from azulsummer.models.actions import FillSupply
 from azulsummer.models.actions import InitializeGameState
-from azulsummer.models.actions import PhaseOneComplete
+from azulsummer.models.actions import PhaseOnePreparationComplete
 from azulsummer.models.actions import PlayPhaseOneTurn
 from azulsummer.models.actions import PreparePhaseOne
 from azulsummer.models.actions import PreparePhaseOneTurn
@@ -81,7 +81,7 @@ PHASE_ONE_HANDLERS: dict[Type[actions.Action], Callable] = {
     FillFactoryDisplays: phase_one.fill_factory_displays,
     PreparePhaseOne: phase_one.prepare_phase_one,
     PreparePhaseOneTurn: phase_one.prepare_phase_one_turn,
-    PhaseOneComplete: phase_one.phase_one_preparation_complete,
+    PhaseOnePreparationComplete: phase_one.phase_one_preparation_complete,
     PlayPhaseOneTurn: phase_one.play_phase_one_turn,
     ResolvePhaseOneTurn: phase_one.resolve_phase_one_turn,
 }

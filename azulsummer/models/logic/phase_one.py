@@ -5,7 +5,7 @@ from azulsummer.models.actions import AssessPhaseOneTileDrawAction
 from azulsummer.models.actions import AssignCurrentPlayerToStartPlayer
 from azulsummer.models.actions import FillFactoryDisplays
 from azulsummer.models.actions import FillSupply
-from azulsummer.models.actions import PhaseOneComplete
+from azulsummer.models.actions import PhaseOnePreparationComplete
 from azulsummer.models.actions import PlayPhaseOneTurn
 from azulsummer.models.actions import PreparePhaseOne
 from azulsummer.models.actions import PreparePhaseOneTurn
@@ -46,13 +46,13 @@ def prepare_phase_one(action: PreparePhaseOne):
         FillFactoryDisplays(game=action.game),
         AssignCurrentPlayerToStartPlayer(game=action.game),
         ResetStartPlayerToken(game=action.game),
-        PhaseOneComplete(game=action.game),
+        PhaseOnePreparationComplete(game=action.game),
     ]
     for action_ in actions:
         action.game.enqueue_action(action_)
 
 
-def phase_one_preparation_complete(action: PhaseOneComplete) -> None:
+def phase_one_preparation_complete(action: PhaseOnePreparationComplete) -> None:
     """
     This is called at the end of prepare_phase_one to ensure all steps
     are completed before publishing the completion of the event
