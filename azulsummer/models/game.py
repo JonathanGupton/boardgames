@@ -173,3 +173,26 @@ class Game:
         return self.state.tiles.view_factory_display_n(
             factory_display_n=factory_display_n
         )
+
+    @property
+    def turn(self):
+        return self.state.turn
+
+    @turn.setter
+    def turn(self, value):
+        self.state.turn = value
+
+    @property
+    def phase_turn(self):
+        return self.state.phase_turn
+
+    @phase_turn.setter
+    def phase_turn(self, value):
+        self.state.phase_turn = value
+
+    @property
+    def n_players(self):
+        return len(self.players)
+
+    def phase_one_end_criteria_are_met(self) -> bool:
+        return self.state.phase_one_end_criteria_are_met()

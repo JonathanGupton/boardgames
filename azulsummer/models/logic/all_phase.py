@@ -6,27 +6,31 @@ from azulsummer.models.actions import ResetPhaseTurn
 from azulsummer.models.actions import ResetStartPlayerToken
 from azulsummer.models.enums import Phase
 from azulsummer.models.enums import WildTiles
+from azulsummer.models.events import CurrentPlayerIndexAdvanced
 from azulsummer.models.events import CurrentPlayerSet
 from azulsummer.models.events import PhaseAdvanced
+from azulsummer.models.events import PhaseTurnIncremented
 from azulsummer.models.events import PhaseTurnSetToZero
 from azulsummer.models.events import RoundAdvanced
 from azulsummer.models.events import StartPlayerTokenWasReset
+from azulsummer.models.events import TurnIncremented
 from azulsummer.models.events import WildTileIndexAdvanced
 from azulsummer.models.game import Game
 
 
-def increment_turn():
-    pass
+def increment_turn(game: Game) -> None:
+    game.turn += 1
+    game.enqueue_event(TurnIncremented(game))
 
 
-def increment_phase_turn():
-    pass
+def increment_phase_turn(game: Game) -> None:
+    game.phase_turn += 1
+    game.enqueue_event(PhaseTurnIncremented(game))
 
 
-# def generate_draw(action: GenerateTileDraw) -> TileArray:
-#     tiles = generate_bag_draw(action.game.state.tiles)
-#     action.game.event_queue.append(TileDrawGenerated(action.game, str(tiles)))
-#     return tiles
+def advance_to_next_player(game):
+    game.current_player_index = (game.current_player_index + 1) % game.n_players
+    game.enqueue_event(CurrentPlayerIndexAdvanced(game, game.current_player_index))
 
 
 def advance_phase(action: AdvancePhase) -> None:
@@ -43,8 +47,8 @@ def assign_current_player_to_start_player(
     action: AssignCurrentPlayerToStartPlayer,
 ) -> None:
     """
-    Assign the player that starts the phase.  This is called at the beginning of
-    each phase.
+    Assign the player that starts the phase.  This function is called at the
+    beginning of each phase.
     """
     if action.game.start_player_index is None:
         player_to_start = 0

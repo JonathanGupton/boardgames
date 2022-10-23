@@ -1,5 +1,6 @@
 """Module containing the logic for Phase One of an Azul Summer Pavilion game"""
 
+from azulsummer.models.actions import AdvancePhase
 from azulsummer.models.actions import AssessPhaseOneTileDrawAction
 from azulsummer.models.actions import AssignCurrentPlayerToStartPlayer
 from azulsummer.models.actions import FillFactoryDisplays
@@ -7,16 +8,22 @@ from azulsummer.models.actions import FillSupply
 from azulsummer.models.actions import PhaseOneComplete
 from azulsummer.models.actions import PlayPhaseOneTurn
 from azulsummer.models.actions import PreparePhaseOne
+from azulsummer.models.actions import PreparePhaseOneTurn
+from azulsummer.models.actions import PreparePhaseTwo
 from azulsummer.models.actions import ResetStartPlayerToken
+from azulsummer.models.actions import ResolvePhaseOneTurn
 from azulsummer.models.enums import TileTarget
 from azulsummer.models.events import BeginningPhaseOnePreparation
+from azulsummer.models.events import BeginningTurn
 from azulsummer.models.events import DiscardTilesFromFactoryDisplayToTableCenter
 from azulsummer.models.events import PhaseOneDrawsGenerated
+from azulsummer.models.events import PhaseOneEndCriteriaHaveBeenMet
 from azulsummer.models.events import PhaseOnePrepared
 from azulsummer.models.events import PlayerIsFirstToDrawFromTableCenter
 from azulsummer.models.events import PlayerSelectedTilesToAcquire
 from azulsummer.models.events import StartPlayerTokenWasSet
 from azulsummer.models.game import Game
+from azulsummer.models.logic import all_phase
 from azulsummer.models.logic import score
 from azulsummer.models.logic import tiles
 from azulsummer.models.position import DrawPosition
@@ -56,12 +63,17 @@ def phase_one_preparation_complete(action: PhaseOneComplete) -> None:
     action.game.enqueue_action(PlayPhaseOneTurn(game=action.game))
 
 
-def prepare_phase_one_turn():
-    # advance to next players
-    # increment turn
-    # increment phase turn
-    # enqueue PlayPhaseOneTurn
-    pass
+def prepare_phase_one_turn(action: PreparePhaseOneTurn):
+    """
+    - Advance to the next turn
+    - Advance to the next player
+    - increment turn
+    - enqueue PlayPhaseOneTurn
+    """
+    all_phase.increment_turn(action.game)
+    all_phase.increment_phase_turn(action.game)
+    all_phase.advance_to_next_player(action.game)
+    action.game.enqueue_action(PlayPhaseOneTurn(game=action.game))
 
 
 def play_phase_one_turn(action: PlayPhaseOneTurn):
@@ -72,6 +84,8 @@ def play_phase_one_turn(action: PlayPhaseOneTurn):
     - Resolve the turn
     """
     # TODO: Enqueue a "Begin Phase 1, Turn #, Phase turn #, player #" event
+    action.game.enqueue_event(
+        BeginningTurn(action.game, action.game.turn, action.game.phase_turn, action.game.current_player_index))
     draws = [
         *tiles.generate_acquire_tile_draws(
             tiles=action.game.tiles, wild_color=action.game.wild_tile
@@ -89,16 +103,22 @@ def play_phase_one_turn(action: PlayPhaseOneTurn):
     )
 
     handle_tile_acquisition(game=action.game, draw_position=draw_to_play)
-    # enqueue ResolvePhaseOneAction()
+    action.game.enqueue_action(ResolvePhaseOneTurn(action.game))
 
 
 def resolve_phase_one_turn(action) -> None:
-    # evaluate remaining tiles in the factory and middle
-    # - if phase_one_end_criteria_are_met():
-    #       enqueue PreparePhaseTwo
-    # - else:
-    # -- enqueue PreparePhaseOneTurnAction
-    pass
+    if phase_one_end_criteria_are_met(action.game):
+        action.game.enqueue_action(AdvancePhase(action.game))
+        action.game.enqueue_action(PreparePhaseTwo(action.game))
+    else:
+        action.game.enqueue_action(PreparePhaseOneTurn(action.game))
+
+
+def phase_one_end_criteria_are_met(game: Game) -> bool:
+    """Verify if the criteria to end phase one have been met"""
+    if game.phase_one_end_criteria_are_met():
+        game.enqueue_event(PhaseOneEndCriteriaHaveBeenMet(game))
+        return True
 
 
 def handle_tile_acquisition(game: Game, draw_position: DrawPosition) -> None:

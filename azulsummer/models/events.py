@@ -10,6 +10,19 @@ class Event:
 
 
 @dataclass
+class PhaseOneEndCriteriaHaveBeenMet(Event):
+    game: Game
+
+
+@dataclass
+class BeginningTurn(Event):
+    game: Game
+    turn: int
+    phase_turn: int
+    current_player: int
+
+
+@dataclass
 class PlayerSelectedTilesToAcquire(Event):
     game: Game
     player: int
@@ -118,8 +131,9 @@ class PhaseTurnSetToZero(Event):
 
 
 @dataclass
-class AdvancedCurrentPlayerIndex(Event):
+class CurrentPlayerIndexAdvanced(Event):
     game: Game
+    next_player: int
 
 
 @dataclass
@@ -129,7 +143,12 @@ class RoundAdvanced(Event):
 
 
 @dataclass
-class AdvancedTurn(Event):
+class TurnIncremented(Event):
+    game: Game
+
+
+@dataclass
+class PhaseTurnIncremented(Event):
     game: Game
 
 

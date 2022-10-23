@@ -1,12 +1,10 @@
 """Module containing the logic for Phase Two of an Azul Summer Pavilion game"""
 
 
-def begin_phase_two(action):
-    # Advance the phase
-    # Advance turn
-    # Set phase turn to 0
+def prepare_phase_two(action):
     # prepare_phase_two_turn()
     # set_start_player()
+    print("You've reached phase two - Congratulations!")
     pass
 
 

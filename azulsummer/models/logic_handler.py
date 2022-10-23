@@ -14,12 +14,17 @@ from azulsummer.models.actions import InitializeGameState
 from azulsummer.models.actions import PhaseOneComplete
 from azulsummer.models.actions import PlayPhaseOneTurn
 from azulsummer.models.actions import PreparePhaseOne
+from azulsummer.models.actions import PreparePhaseOneTurn
+from azulsummer.models.actions import PreparePhaseTwo
 from azulsummer.models.actions import ResetPhaseTurn
 from azulsummer.models.actions import ResetStartPlayerToken
+from azulsummer.models.actions import ResolvePhaseOneTurn
 from azulsummer.models.actions import StartGame
 from azulsummer.models.events import AssignedStartPlayer
 from azulsummer.models.events import BagLoadedWith132Tiles
 from azulsummer.models.events import BeginningPhaseOnePreparation
+from azulsummer.models.events import BeginningTurn
+from azulsummer.models.events import CurrentPlayerIndexAdvanced
 from azulsummer.models.events import CurrentPlayerSet
 from azulsummer.models.events import DecrementedPlayerScore
 from azulsummer.models.events import DiscardTilesFromFactoryDisplayToTableCenter
@@ -31,7 +36,9 @@ from azulsummer.models.events import LoadedTilesToFactoryDisplay
 from azulsummer.models.events import LoadedTilesToSupply
 from azulsummer.models.events import PhaseAdvanced
 from azulsummer.models.events import PhaseOneDrawsGenerated
+from azulsummer.models.events import PhaseOneEndCriteriaHaveBeenMet
 from azulsummer.models.events import PhaseOnePrepared
+from azulsummer.models.events import PhaseTurnIncremented
 from azulsummer.models.events import PhaseTurnSetToZero
 from azulsummer.models.events import PlayerIsFirstToDrawFromTableCenter
 from azulsummer.models.events import PlayerScoresInitializedAt5
@@ -44,10 +51,12 @@ from azulsummer.models.events import StartTokenReset
 from azulsummer.models.events import TileDrawGenerated
 from azulsummer.models.events import TilesDrawnFromBag
 from azulsummer.models.events import TilesMoved
+from azulsummer.models.events import TurnIncremented
 from azulsummer.models.events import WildTileIndexAdvanced
 from azulsummer.models.logic import all_phase
 from azulsummer.models.logic import game
 from azulsummer.models.logic import phase_one
+from azulsummer.models.logic import phase_two
 from azulsummer.models.logic import tiles
 
 GAME_HANDLERS: dict[Type[actions.Action], Callable] = {
@@ -71,11 +80,15 @@ ALL_PHASE_HANDLERS: dict[Type[actions.Action], Callable] = {
 PHASE_ONE_HANDLERS: dict[Type[actions.Action], Callable] = {
     FillFactoryDisplays: phase_one.fill_factory_displays,
     PreparePhaseOne: phase_one.prepare_phase_one,
+    PreparePhaseOneTurn: phase_one.prepare_phase_one_turn,
     PhaseOneComplete: phase_one.phase_one_preparation_complete,
     PlayPhaseOneTurn: phase_one.play_phase_one_turn,
+    ResolvePhaseOneTurn: phase_one.resolve_phase_one_turn,
 }
 
-PHASE_TWO_HANDLERS: dict[Type[actions.Action], Callable] = {}
+PHASE_TWO_HANDLERS: dict[Type[actions.Action], Callable] = {
+    PreparePhaseTwo: phase_two.prepare_phase_two,
+}
 
 PHASE_THREE_HANDLERS: dict[Type[actions.Action], Callable] = {}
 
@@ -128,4 +141,9 @@ EVENT_HANDLERS = {
     DecrementedPlayerScore: DEFAULT_EVENT_HANDLER,
     PlayerIsFirstToDrawFromTableCenter: DEFAULT_EVENT_HANDLER,
     DiscardTilesFromFactoryDisplayToTableCenter: DEFAULT_EVENT_HANDLER,
+    TurnIncremented: DEFAULT_EVENT_HANDLER,
+    PhaseTurnIncremented: DEFAULT_EVENT_HANDLER,
+    CurrentPlayerIndexAdvanced: DEFAULT_EVENT_HANDLER,
+    PhaseOneEndCriteriaHaveBeenMet: DEFAULT_EVENT_HANDLER,
+    BeginningTurn: DEFAULT_EVENT_HANDLER,
 }

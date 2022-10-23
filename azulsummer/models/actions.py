@@ -14,6 +14,11 @@ class Action:
 
 
 @dataclass
+class ResolvePhaseOneTurn(Action):
+    game: Game
+
+
+@dataclass
 class PlayPhaseOneTurn(Action):
     game: Game
 
@@ -50,6 +55,11 @@ class AssessPhaseOneTileDrawAction(Action):
 
 @dataclass
 class AdvancePhase(Action):
+    game: Game
+
+
+@dataclass
+class PreparePhaseTwo(Action):
     game: Game
 
 
@@ -103,6 +113,10 @@ class PhaseOneComplete(Action):
 class PreparePhaseOne(Action):
     game: Game
 
+
+@dataclass
+class PreparePhaseOneTurn(Action):
+    game: Game
 
 @dataclass
 class RegisterPlayer(Action):
