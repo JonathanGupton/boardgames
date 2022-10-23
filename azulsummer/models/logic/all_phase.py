@@ -92,8 +92,8 @@ def advance_wild_tile_index(action: AdvanceWildTileIndex) -> None:
 
 
 def reset_phase_turn(action: ResetPhaseTurn):
-    """Reset the Phase Turn to 0 at the start of a phase"""
-    action.game.state.phase_turn = 0
+    """Reset the Phase Turn to 1 at the start of a phase"""
+    action.game.state.phase_turn = 1
     action.game.event_queue.append(PhaseTurnSetToZero(action.game))
 
 
