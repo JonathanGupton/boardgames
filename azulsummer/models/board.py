@@ -27,8 +27,8 @@ class Board:
         board = np.zeros(shape=(len(StarColor), cls.n_tile_spaces), dtype="B")
         return cls(board)
 
-    def is_valid_placement_location(self, star: StarColor, tile_value: int) -> bool:
-        """Validate that the star location is a valid placement location"""
+    def is_placement_location_open(self, star: StarColor, tile_value: int) -> bool:
+        """Validate that the star location is open"""
         return (
             (tile_value >= 1)
             and (tile_value <= 6)
@@ -37,7 +37,7 @@ class Board:
 
     def place_tile(self, star: StarColor, tile_value: int) -> int:
         """Place a tile on the board.  Returns the value of the placement."""
-        if self.is_valid_placement_location(star, tile_value):
+        if self.is_placement_location_open(star, tile_value):
             score = self.score_tile_placement(star, tile_value)
             self.board[star, tile_value - 1] = 1
         else:
