@@ -30,6 +30,7 @@ class State:
         game_round: Optional[int],
         start_player_index: Optional[int],
         current_player_index: Optional[int],
+            active_players: Optional[list[int]],
         winner: Optional[int],
     ) -> None:
         self.n_players = n_players
@@ -47,7 +48,7 @@ class State:
         self.game_round = game_round
         self.start_player_index = start_player_index
         self.current_player_index = current_player_index
-
+        self.active_players = active_players
         self.winner = winner
 
     @classmethod
@@ -65,6 +66,7 @@ class State:
         game_round = None
         start_player_index = None
         current_player_index = None
+        active_players = None
         winner = None
         return cls(
             n_players,
@@ -80,6 +82,7 @@ class State:
             game_round,
             start_player_index,
             current_player_index,
+            active_players,
             winner,
         )
 
@@ -122,14 +125,6 @@ class State:
         """
         self.current_player_index = (self.current_player_index + 1) % self.n_players
 
-    def fill_supply(self):
-        """Fill the supply with tiles."""
-        self.tiles.fill_supply()
-
-    def fill_factory_displays(self):
-        """Fill the factory displays with tiles."""
-        self.tiles.fill_factory_displays()
-
     def generate_actions(self):
         """Generate all available actions given the current state."""
         pass
@@ -145,3 +140,7 @@ class State:
             The integer index of the current player.
         """
         return self.current_player_index
+
+    def reset_active_players(self):
+        """Reset all players to be active.  This is used in Phase 2."""
+        self.active_players = [1 for _ in range(self.n_players)]

@@ -8,9 +8,17 @@ from azulsummer.models.tile_array import TileArray
 class Event:
     pass
 
+@dataclass
+class AllPlayersSetToActive(Event):
+    game: Game
+
 
 @dataclass
 class PhaseOneEndCriteriaHaveBeenMet(Event):
+    game: Game
+
+@dataclass
+class PhaseTwoPrepared(Event):
     game: Game
 
 
@@ -31,6 +39,11 @@ class PlayerSelectedTilesToAcquire(Event):
 
 @dataclass
 class PhaseOneDrawsGenerated(Event):
+    game: Game
+    draws: list[str]
+
+@dataclass
+class PhaseTwoTilePlacementsGenerated(Event):
     game: Game
     draws: list[str]
 

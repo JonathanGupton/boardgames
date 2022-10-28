@@ -83,7 +83,6 @@ def play_phase_one_turn(action: PlayPhaseOneTurn):
     - Transfer the tiles drawn to the player reserve, move the rest to the center
     - Resolve the turn
     """
-    # TODO: Enqueue a "Begin Phase 1, Turn #, Phase turn #, player #" event
     action.game.enqueue_event(
         BeginningTurn(action.game, action.game.turn, action.game.phase_turn, action.game.current_player_index))
     draws = [
@@ -129,8 +128,8 @@ def handle_tile_acquisition(game: Game, draw_position: DrawPosition) -> None:
     - Transfer tiles to the middle from the factory display
     - Enqueue turn resolution action
     """
-    source = draw_position.as_tile_position()
-    destination = TilePosition(
+    source: TilePosition = draw_position.as_tile_position()
+    destination: TilePosition = TilePosition(
         location=TileTarget.PlayerReserve, nth=game.current_player_index
     )
     tiles.move_tiles(

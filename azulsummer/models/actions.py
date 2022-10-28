@@ -6,11 +6,34 @@ from typing import Optional
 
 from azulsummer.models.enums import TileTarget
 from azulsummer.models.game import Game
+from azulsummer.models.position import BoardPosition
 from azulsummer.models.position import DrawPosition
+from azulsummer.models.tile_array import TileArray
 
 
 class Action:
     pass
+
+
+@dataclass()
+class SetAllPlayersActive(Action):
+    game: Game
+
+
+@dataclass(slots=True)
+class BoardPlacement(Action):
+    game: Game
+    board_position: BoardPosition
+    tile_cost: TileArray
+
+    def __str__(self):
+        return f"{str(self.board_position.star.name)}-{self.board_position.tile_value} - {str(self.tile_cost)}"
+
+
+@dataclass(slots=True)
+class SelectTilePlacement(Action):
+    game: Game
+    available_actions: list[BoardPlacement]
 
 
 @dataclass
@@ -20,6 +43,16 @@ class ResolvePhaseOneTurn(Action):
 
 @dataclass
 class PlayPhaseOneTurn(Action):
+    game: Game
+
+
+@dataclass
+class PhaseTwoPreparationComplete(Action):
+    game: Game
+
+
+@dataclass
+class PlayPhaseTwoTurn(Action):
     game: Game
 
 
@@ -117,6 +150,7 @@ class PreparePhaseOne(Action):
 @dataclass
 class PreparePhaseOneTurn(Action):
     game: Game
+
 
 @dataclass
 class RegisterPlayer(Action):

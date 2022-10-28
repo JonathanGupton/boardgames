@@ -369,3 +369,6 @@ class Tiles:
             f"{self._tiles.sum(axis=0)} is invalid. Only 22 tiles"
             f" are allowed per tile type."
         )
+
+    def color_is_played_in_wild_star(self, player: int, color: TileColor) -> bool:
+        return self.view_player_board_n(player)[StarColor.Wild][color]

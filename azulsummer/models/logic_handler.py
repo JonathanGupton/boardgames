@@ -12,14 +12,18 @@ from azulsummer.models.actions import FillFactoryDisplays
 from azulsummer.models.actions import FillSupply
 from azulsummer.models.actions import InitializeGameState
 from azulsummer.models.actions import PhaseOnePreparationComplete
+from azulsummer.models.actions import PhaseTwoPreparationComplete
 from azulsummer.models.actions import PlayPhaseOneTurn
+from azulsummer.models.actions import PlayPhaseTwoTurn
 from azulsummer.models.actions import PreparePhaseOne
 from azulsummer.models.actions import PreparePhaseOneTurn
 from azulsummer.models.actions import PreparePhaseTwo
 from azulsummer.models.actions import ResetPhaseTurn
 from azulsummer.models.actions import ResetStartPlayerToken
 from azulsummer.models.actions import ResolvePhaseOneTurn
+from azulsummer.models.actions import SetAllPlayersActive
 from azulsummer.models.actions import StartGame
+from azulsummer.models.events import AllPlayersSetToActive
 from azulsummer.models.events import AssignedStartPlayer
 from azulsummer.models.events import BagLoadedWith132Tiles
 from azulsummer.models.events import BeginningPhaseOnePreparation
@@ -40,6 +44,8 @@ from azulsummer.models.events import PhaseOneEndCriteriaHaveBeenMet
 from azulsummer.models.events import PhaseOnePrepared
 from azulsummer.models.events import PhaseTurnIncremented
 from azulsummer.models.events import PhaseTurnSetToZero
+from azulsummer.models.events import PhaseTwoPrepared
+from azulsummer.models.events import PhaseTwoTilePlacementsGenerated
 from azulsummer.models.events import PlayerIsFirstToDrawFromTableCenter
 from azulsummer.models.events import PlayerScoresInitializedAt5
 from azulsummer.models.events import PlayerSelectedTilesToAcquire
@@ -88,6 +94,9 @@ PHASE_ONE_HANDLERS: dict[Type[actions.Action], Callable] = {
 
 PHASE_TWO_HANDLERS: dict[Type[actions.Action], Callable] = {
     PreparePhaseTwo: phase_two.prepare_phase_two,
+    PhaseTwoPreparationComplete: phase_two.phase_two_preparation_complete,
+    PlayPhaseTwoTurn: phase_two.play_phase_two_turn,
+    SetAllPlayersActive: phase_two.set_all_players_active,
 }
 
 PHASE_THREE_HANDLERS: dict[Type[actions.Action], Callable] = {}
@@ -146,4 +155,7 @@ EVENT_HANDLERS = {
     CurrentPlayerIndexAdvanced: DEFAULT_EVENT_HANDLER,
     PhaseOneEndCriteriaHaveBeenMet: DEFAULT_EVENT_HANDLER,
     BeginningTurn: DEFAULT_EVENT_HANDLER,
+    AllPlayersSetToActive: DEFAULT_EVENT_HANDLER,
+    PhaseTwoPrepared: DEFAULT_EVENT_HANDLER,
+    PhaseTwoTilePlacementsGenerated: DEFAULT_EVENT_HANDLER,
 }

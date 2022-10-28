@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from azulsummer.models.enums import StarColor
 from azulsummer.models.enums import TileIndex
 from azulsummer.models.enums import TileTarget
 from azulsummer.models.tile_array import TileArray
@@ -10,7 +11,7 @@ from azulsummer.models.tile_array import TileArray
 
 @dataclass(frozen=True)
 class BoardPosition:
-    star: int
+    star: StarColor
     tile_value: int
 
     def flatten(self) -> int:
@@ -20,6 +21,9 @@ class BoardPosition:
     def __iter__(self):
         yield self.star
         yield self.tile_value
+
+    def __str__(self):
+        return f"(star={self.star.name}, value={self.tile_value})"
 
 
 @dataclass(frozen=True)

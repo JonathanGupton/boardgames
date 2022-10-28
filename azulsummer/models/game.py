@@ -5,6 +5,8 @@ from typing import Optional
 from typing import Sequence
 from uuid import uuid4
 
+from azulsummer.models.board import Board
+from azulsummer.models.enums import TileColor
 from azulsummer.models.random import RandomTileDraw
 from azulsummer.models.state import State
 from azulsummer.models.tile_array import TileArray
@@ -196,3 +198,22 @@ class Game:
 
     def phase_one_end_criteria_are_met(self) -> bool:
         return self.state.phase_one_end_criteria_are_met()
+
+    def color_is_played_in_wild_star(self, player: int, color: TileColor) -> bool:
+        return self.state.tiles.color_is_played_in_wild_star(player, color)
+
+    def get_player_board(self, n: int) -> Board:
+        return self.state.boards[n]
+
+    def get_player_reserve_tile_count(self, n: int, color: TileColor) -> int:
+        return self.tiles.view_player_reserve_n(n)[color]
+
+    def get_player_reserve(self, n: int) -> TileArray:
+        return TileArray(self.tiles.view_player_reserve_n(n))
+
+    @property
+    def active_players(self):
+        return self.state.active_players
+
+    def reset_active_players(self):
+        self.state.reset_active_players()
