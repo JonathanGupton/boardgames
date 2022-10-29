@@ -9,7 +9,7 @@ from azulsummer.models.enums import TileTarget
 from azulsummer.models.tile_array import TileArray
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class BoardPosition:
     star: StarColor
     tile_value: int
